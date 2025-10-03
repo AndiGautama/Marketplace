@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:marketplace2/core/utils/formatter.dart';
 import 'package:marketplace2/features/cart/logic/cart_bloc.dart';
 import 'package:marketplace2/features/store/data/models/product_model.dart';
 import 'package:marketplace2/features/store/data/models/store_model.dart';
 import 'package:marketplace2/features/store/data/repositories/mock_store_repository.dart';
 
-// Ubah menjadi StatefulWidget
 class StorePageScreen extends StatefulWidget {
   final String storeId;
   const StorePageScreen({super.key, required this.storeId});
@@ -22,7 +22,6 @@ class _StorePageScreenState extends State<StorePageScreen> {
   @override
   void initState() {
     super.initState();
-    // Panggil future hanya satu kali di sini
     _storeFuture = storeRepository.getStoreById(widget.storeId);
     _productsFuture = storeRepository.getProductsByStoreId(widget.storeId);
   }
@@ -39,7 +38,7 @@ class _StorePageScreenState extends State<StorePageScreen> {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               title: FutureBuilder<StoreModel>(
-                future: _storeFuture, // Gunakan variabel future
+                future: _storeFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return Text(snapshot.data!.name, style: const TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold, shadows: [Shadow(blurRadius: 2)]));
@@ -60,7 +59,7 @@ class _StorePageScreenState extends State<StorePageScreen> {
             ),
           ),
           FutureBuilder<List<ProductModel>>(
-            future: _productsFuture, // Gunakan variabel future
+            future: _productsFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
@@ -114,7 +113,8 @@ class _StorePageScreenState extends State<StorePageScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              'Rp ${product.price.toStringAsFixed(0)}',
+              // --- PERUBAHAN DI SINI ---
+              AppFormatter.formatRupiah(product.price),
               style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
             ),
           ),
