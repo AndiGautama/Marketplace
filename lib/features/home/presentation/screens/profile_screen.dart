@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:marketplace2/core/utils/formatter.dart'; // Import formatter
+import 'package:marketplace2/core/utils/formatter.dart';
 import 'package:marketplace2/features/auth/logic/auth_bloc.dart';
 import 'package:marketplace2/features/wallet/logic/wallet_bloc.dart';
 
@@ -28,12 +28,39 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildLoggedInView(BuildContext context, AuthSuccess authState) {
+    // --- PERINTAH DEBUGGING ---
+    // Baris ini akan mencetak nama pengguna ke Debug Console saat halaman ini dibuat.
+    debugPrint("--- Membangun Halaman Profil untuk pengguna: '${authState.user.fullName}' ---");
+    // -------------------------
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ... (Bagian Avatar dan Nama tidak berubah)
+          CircleAvatar(
+            radius: 50,
+            backgroundColor: Theme.of(context).primaryColor.withOpacity(0.2),
+            child: Text(
+              authState.user.fullName.isNotEmpty ? authState.user.fullName[0].toUpperCase() : '?',
+              style: TextStyle(
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            authState.user.fullName,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            authState.user.email,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+          ),
           const SizedBox(height: 32),
           const Divider(),
           const SizedBox(height: 16),
@@ -43,7 +70,6 @@ class ProfileScreen extends StatelessWidget {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    // --- PERUBAHAN DI SINI ---
                     _buildWalletInfo('Saldo', AppFormatter.formatRupiah(walletState.balance)),
                     _buildWalletInfo('Poin', '${walletState.points} Poin'),
                   ],

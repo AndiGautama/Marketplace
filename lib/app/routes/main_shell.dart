@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:marketplace2/features/cart/logic/cart_bloc.dart';
 import 'package:marketplace2/features/home/presentation/widgets/more_options_bottom_sheet.dart';
 
 class MainShell extends StatefulWidget {
@@ -16,7 +18,7 @@ class _MainShellState extends State<MainShell> {
     if (location.startsWith('/cart')) return 1;
     if (location.startsWith('/add')) return 3;
     if (location.startsWith('/profile')) return 4;
-    return 0; // Default to home
+    return 0; // Default to home and its sub-routes
   }
 
   void _onItemTapped(int index, BuildContext context) {
@@ -27,6 +29,7 @@ class _MainShellState extends State<MainShell> {
       case 1:
         context.go('/cart');
         break;
+      // Case 2 is the FAB
       case 3:
         context.go('/add');
         break;
@@ -43,9 +46,7 @@ class _MainShellState extends State<MainShell> {
     return Scaffold(
       body: widget.child,
       floatingActionButton: FloatingActionButton(
-        // --- PASTIKAN BAGIAN INI SUDAH BENAR ---
         onPressed: () {
-          // Tampilkan Modal Bottom Sheet saat FAB ditekan
           showModalBottomSheet(
             context: context,
             shape: const RoundedRectangleBorder(
@@ -56,7 +57,6 @@ class _MainShellState extends State<MainShell> {
             },
           );
         },
-        // ------------------------------------
         child: const Icon(Icons.list),
         elevation: 2.0,
       ),
@@ -68,20 +68,32 @@ class _MainShellState extends State<MainShell> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             IconButton(
-              icon: Icon(Icons.home, color: selectedIndex == 0 ? Theme.of(context).primaryColor : Colors.grey),
+              icon: Icon(Icons.home_outlined, color: selectedIndex == 0 ? Theme.of(context).primaryColor : Colors.grey),
               onPressed: () => _onItemTapped(0, context),
             ),
-            IconButton(
-              icon: Icon(Icons.shopping_cart, color: selectedIndex == 1 ? Theme.of(context).primaryColor : Colors.grey),
-              onPressed: () => _onItemTapped(1, context),
+            BlocBuilder<CartBloc, CartState>(
+              builder: (context, state) {
+                int itemCount = 0;
+                if (state is CartLoaded) {
+                  itemCount = state.items.length;
+                }
+                return Badge(
+                  label: Text('$itemCount'),
+                  isLabelVisible: itemCount > 0,
+                  child: IconButton(
+                    icon: Icon(Icons.shopping_cart_outlined, color: selectedIndex == 1 ? Theme.of(context).primaryColor : Colors.grey),
+                    onPressed: () => _onItemTapped(1, context),
+                  ),
+                );
+              },
             ),
-            const SizedBox(width: 48), // Ruang untuk FAB
+            const SizedBox(width: 48), // The space for the FAB
             IconButton(
               icon: Icon(Icons.add_circle_outline, color: selectedIndex == 3 ? Theme.of(context).primaryColor : Colors.grey),
               onPressed: () => _onItemTapped(3, context),
             ),
             IconButton(
-              icon: Icon(Icons.person, color: selectedIndex == 4 ? Theme.of(context).primaryColor : Colors.grey),
+              icon: Icon(Icons.person_outline, color: selectedIndex == 4 ? Theme.of(context).primaryColor : Colors.grey),
               onPressed: () => _onItemTapped(4, context),
             ),
           ],

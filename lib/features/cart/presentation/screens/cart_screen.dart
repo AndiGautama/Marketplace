@@ -26,9 +26,9 @@ class CartScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey),
+                    Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey.shade400),
                     const SizedBox(height: 16),
-                    const Text('Keranjang Anda kosong.', style: TextStyle(fontSize: 18, color: Colors.grey)),
+                    Text('Keranjang Anda kosong', style: TextStyle(fontSize: 18, color: Colors.grey.shade600)),
                   ],
                 ),
               );
@@ -38,7 +38,7 @@ class CartScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: ListView.builder(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     itemCount: state.items.length,
                     itemBuilder: (context, index) {
                       final cartItem = state.items[index];
@@ -50,7 +50,6 @@ class CartScreen extends StatelessWidget {
               ],
             );
           }
-          // Tampilan loading awal atau jika state tidak terduga
           return const Center(child: CircularProgressIndicator());
         },
       ),
@@ -59,57 +58,47 @@ class CartScreen extends StatelessWidget {
 
   Widget _buildCartItemCard(BuildContext context, CartItem cartItem) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      margin: const EdgeInsets.only(bottom: 12.0),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(12.0),
         child: Row(
           children: [
-            // Placeholder Gambar
             Container(
               width: 80,
               height: 80,
               decoration: BoxDecoration(
                 color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(Icons.image_outlined, color: Colors.grey.shade400, size: 40),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(cartItem.product.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
                   Text(
-                    AppFormatter.formatRupiah(cartItem.product.price), // Format harga
-                    style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                    AppFormatter.formatRupiah(cartItem.product.price),
+                    style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                 ],
               ),
             ),
-            // Kontrol Kuantitas
             Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.remove_circle_outline),
-                  onPressed: () {
-                    context.read<CartBloc>().add(DecrementCartItem(cartItem.product));
-                  },
+                  icon: const Icon(Icons.remove_circle_outline, color: Colors.grey),
+                  onPressed: () => context.read<CartBloc>().add(DecrementCartItem(cartItem.product)),
                 ),
                 Text('${cartItem.quantity}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  onPressed: () {
-                     context.read<CartBloc>().add(IncrementCartItem(cartItem.product));
-                  },
+                  icon: Icon(Icons.add_circle_outline, color: Theme.of(context).primaryColor),
+                  onPressed: () => context.read<CartBloc>().add(IncrementCartItem(cartItem.product)),
                 ),
-                IconButton(
-                  icon: Icon(Icons.delete_outline, color: Colors.red.shade700),
-                  onPressed: () {
-                     context.read<CartBloc>().add(RemoveFromCart(cartItem.product));
-                  },
-                )
               ],
             ),
           ],

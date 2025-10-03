@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:marketplace2/app/routes/app_router.dart';
 import 'package:marketplace2/features/auth/data/repositories/local_auth_repository.dart';
 import 'package:marketplace2/features/auth/logic/auth_bloc.dart';
 import 'package:marketplace2/features/cart/data/repositories/cart_repository.dart';
 import 'package:marketplace2/features/cart/logic/cart_bloc.dart';
+import 'package:marketplace2/features/history/data/repositories/history_repository.dart';
 import 'package:marketplace2/features/wallet/data/repositories/wallet_repository.dart';
 import 'package:marketplace2/features/wallet/logic/wallet_bloc.dart';
-import 'package:marketplace2/features/history/data/repositories/history_repository.dart';
-
 
 void main() async {
   // Pastikan binding siap sebelum menjalankan plugin
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Inisialisasi data locale untuk format tanggal Bahasa Indonesia
+  await initializeDateFormatting('id_ID', null); 
+  
   runApp(const MyApp());
 }
 
@@ -26,7 +30,7 @@ class MyApp extends StatelessWidget {
         RepositoryProvider(create: (context) => LocalAuthRepository()),
         RepositoryProvider(create: (context) => WalletRepository()),
         RepositoryProvider(create: (context) => CartRepository()),
-         RepositoryProvider(create: (context) => HistoryRepository()), // Daftarkan di sini
+        RepositoryProvider(create: (context) => HistoryRepository()),
       ],
       child: MultiBlocProvider(
         providers: [

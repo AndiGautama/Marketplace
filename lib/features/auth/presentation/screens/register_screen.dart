@@ -17,7 +17,7 @@ class RegisterScreen extends StatelessWidget {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            context.go('/'); // Navigasi ke Home jika registrasi sukses
+            context.go('/');
           }
           if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -47,10 +47,25 @@ class RegisterScreen extends StatelessWidget {
                           ? const Center(child: CircularProgressIndicator())
                           : ElevatedButton(
                               onPressed: () {
+                                // --- VALIDASI DITAMBAHKAN DI SINI ---
+                                final fullName = fullNameController.text.trim();
+                                final email = emailController.text.trim();
+                                final password = passwordController.text;
+
+                                if (fullName.isEmpty || email.isEmpty || password.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Semua kolom harus diisi.'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  return; // Hentikan proses jika ada yang kosong
+                                }
+
                                 context.read<AuthBloc>().add(RegisterButtonPressed(
-                                      fullName: fullNameController.text,
-                                      email: emailController.text,
-                                      password: passwordController.text,
+                                      fullName: fullName,
+                                      email: email,
+                                      password: password,
                                     ));
                               },
                               style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),

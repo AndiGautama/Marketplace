@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:marketplace2/core/utils/formatter.dart';
 import 'package:marketplace2/features/auth/logic/auth_bloc.dart';
 import 'package:marketplace2/features/history/data/models/transaction_model.dart';
 import 'package:marketplace2/features/history/data/repositories/history_repository.dart';
 
-// Ubah menjadi StatefulWidget
 class HistoryScreen extends StatefulWidget {
   final TransactionType? filter;
   const HistoryScreen({super.key, this.filter});
@@ -21,13 +21,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   void initState() {
     super.initState();
-    // Ambil data hanya satu kali saat halaman pertama kali dibuat
     final authState = context.read<AuthBloc>().state;
     if (authState is AuthSuccess) {
       final historyRepo = context.read<HistoryRepository>();
       _transactionsFuture = historyRepo.getTransactions(authState.user.email);
     } else {
-      // Jika entah bagaimana pengguna tidak login, siapkan future kosong
       _transactionsFuture = Future.value([]);
     }
   }
@@ -58,7 +56,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       ),
       body: authState is AuthSuccess
           ? FutureBuilder<List<TransactionModel>>(
-              future: _transactionsFuture, // Gunakan future dari state
+              future: _transactionsFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -80,6 +78,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 }
 
                 return ListView.builder(
+                  padding: const EdgeInsets.only(top: 8.0),
                   itemCount: transactions.length,
                   itemBuilder: (context, index) {
                     return _buildTransactionTile(context, transactions[index]);
@@ -101,7 +100,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       case TransactionType.purchase:
         icon = Icons.shopping_bag_outlined;
         color = Colors.red;
-        amountString = '- Rp ${(-trx.amountChange).toStringAsFixed(0)}';
+        amountString = '- ${AppFormatter.formatRupiah(-trx.amountChange)}';
         if (trx.pointsChange > 0) {
           pointString = '+${trx.pointsChange} Poin';
         }
@@ -109,7 +108,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       case TransactionType.topUp:
         icon = Icons.account_balance_wallet_outlined;
         color = Colors.green;
-        amountString = '+ Rp ${trx.amountChange.toStringAsFixed(0)}';
+        amountString = '+ ${AppFormatter.formatRupiah(trx.amountChange)}';
         break;
       case TransactionType.pointRedemption:
         icon = Icons.star_outline;
@@ -120,10 +119,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         leading: Icon(icon, color: color, size: 32),
         title: Text(trx.description, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(DateFormat('d MMMM yyyy, HH:mm').format(trx.date)),
+        subtitle: Text(DateFormat('d MMMM yyyy, HH:mm', 'id_ID').format(trx.date)),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,

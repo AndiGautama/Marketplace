@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:marketplace2/features/auth/logic/auth_bloc.dart';
+import 'package:marketplace2/features/cart/logic/cart_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -79,9 +80,25 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.shopping_cart_outlined, color: Theme.of(context).primaryColor),
-            onPressed: () => _handleProtectedAction(context, () => context.go('/cart')),
+          BlocBuilder<CartBloc, CartState>(
+            builder: (context, state) {
+              int itemCount = 0;
+              if (state is CartLoaded) {
+                itemCount = state.items.length;
+              }
+              return Badge(
+                label: Text('$itemCount'),
+                isLabelVisible: itemCount > 0,
+                child: IconButton(
+                  icon: Icon(Icons.shopping_cart_outlined, color: Theme.of(context).primaryColor),
+                  onPressed: () {
+                    _handleProtectedAction(context, () {
+                      context.go('/cart');
+                    });
+                  },
+                ),
+              );
+            },
           ),
         ],
       ),

@@ -23,7 +23,6 @@ class LoyaltyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Tombol kembali akan muncul otomatis karena kita membukanya dengan context.push()
         title: const Text('Tukar Poin'),
       ),
       body: BlocBuilder<WalletBloc, WalletState>(
@@ -31,12 +30,10 @@ class LoyaltyScreen extends StatelessWidget {
           if (walletState is WalletLoaded) {
             return Column(
               children: [
-                // Bagian header yang menampilkan total poin
                 _buildPointsHeader(context, walletState.points),
-                // Daftar hadiah yang bisa ditukar
                 Expanded(
                   child: ListView.builder(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     itemCount: _dummyRewards.length,
                     itemBuilder: (context, index) {
                       final reward = _dummyRewards[index];
@@ -57,23 +54,30 @@ class LoyaltyScreen extends StatelessWidget {
   Widget _buildPointsHeader(BuildContext context, int points) {
     return Container(
       width: double.infinity,
-      color: Colors.white,
+      margin: const EdgeInsets.all(16.0),
       padding: const EdgeInsets.all(24.0),
-      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Theme.of(context).primaryColor, Colors.deepPurpleAccent],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(15.0),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).primaryColor.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          )
+        ],
+      ),
       child: Column(
         children: [
-          Text(
-            'Poin Kamu Saat Ini',
-            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-          ),
+          const Text('Poin Kamu Saat Ini', style: TextStyle(fontSize: 18, color: Colors.white70)),
           const SizedBox(height: 8),
           Text(
             '$points Poin',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColor,
-            ),
+            style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ],
       ),
@@ -82,46 +86,58 @@ class LoyaltyScreen extends StatelessWidget {
 
   Widget _buildRewardCard(BuildContext context, RewardModel reward, bool canRedeem) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-      child: ListTile(
-        leading: Icon(Icons.card_giftcard, color: Theme.of(context).primaryColor),
-        title: Text(reward.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text('${reward.pointCost} Poin'),
-        trailing: ElevatedButton(
-          // Tombol akan nonaktif (berwarna abu-abu) jika poin tidak cukup
-          onPressed: canRedeem
-              ? () {
-                  final authState = context.read<AuthBloc>().state;
-                  if (authState is AuthSuccess) {
-                    // 1. Catat transaksi tukar poin ke riwayat
-                    final transaction = TransactionModel(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
-                      type: TransactionType.pointRedemption,
-                      description: 'Tukar: ${reward.name}',
-                      amountChange: 0,
-                      pointsChange: -reward.pointCost, // Poin berkurang
-                      date: DateTime.now(),
-                    );
-                    context
-                        .read<HistoryRepository>()
-                        .addTransaction(authState.user.email, transaction);
+      margin: const EdgeInsets.only(bottom: 12.0),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Icon(Icons.card_giftcard, color: Theme.of(context).primaryColor, size: 32),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(reward.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  const SizedBox(height: 4),
+                  Text('${reward.pointCost} Poin', style: TextStyle(color: Colors.grey.shade600)),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: canRedeem
+                  ? () {
+                      final authState = context.read<AuthBloc>().state;
+                      if (authState is AuthSuccess) {
+                        final transaction = TransactionModel(
+                          id: DateTime.now().millisecondsSinceEpoch.toString(),
+                          type: TransactionType.pointRedemption,
+                          description: 'Tukar: ${reward.name}',
+                          amountChange: 0,
+                          pointsChange: -reward.pointCost,
+                          date: DateTime.now(),
+                        );
+                        context
+                            .read<HistoryRepository>()
+                            .addTransaction(authState.user.email, transaction);
 
-                    // 2. Kirim event RedeemPoints ke WalletBloc
-                    context.read<WalletBloc>().add(RedeemPoints(
-                          pointsToSubtract: reward.pointCost,
-                          userEmail: authState.user.email,
-                        ));
+                        context.read<WalletBloc>().add(RedeemPoints(
+                              pointsToSubtract: reward.pointCost,
+                              userEmail: authState.user.email,
+                            ));
 
-                    // 3. Tampilkan notifikasi sukses
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content: Text('Berhasil menukar ${reward.name}!'),
-                          backgroundColor: Colors.green),
-                    );
-                  }
-                }
-              : null, // Beri nilai null pada onPressed untuk menonaktifkan tombol
-          child: const Text('Tukar'),
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text('Berhasil menukar ${reward.name}!'),
+                              backgroundColor: Colors.green),
+                        );
+                      }
+                    }
+                  : null,
+              child: const Text('Tukar'),
+            ),
+          ],
         ),
       ),
     );
