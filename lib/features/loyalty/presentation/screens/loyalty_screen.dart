@@ -22,8 +22,12 @@ class LoyaltyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade100, // abu muda
       appBar: AppBar(
         title: const Text('Tukar Poin'),
+        backgroundColor: Colors.grey.shade200, // abu untuk AppBar
+        foregroundColor: Colors.black87,
+        elevation: 0,
       ),
       body: BlocBuilder<WalletBloc, WalletState>(
         builder: (context, walletState) {
@@ -58,14 +62,14 @@ class LoyaltyScreen extends StatelessWidget {
       padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Theme.of(context).primaryColor, Colors.deepPurpleAccent],
+          colors: [Colors.grey.shade600, Colors.grey.shade400],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(15.0),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).primaryColor.withOpacity(0.3),
+            color: Colors.grey.shade500.withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           )
@@ -86,6 +90,7 @@ class LoyaltyScreen extends StatelessWidget {
 
   Widget _buildRewardCard(BuildContext context, RewardModel reward, bool canRedeem) {
     return Card(
+      color: Colors.white,
       margin: const EdgeInsets.only(bottom: 12.0),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -93,13 +98,13 @@ class LoyaltyScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           children: [
-            Icon(Icons.card_giftcard, color: Theme.of(context).primaryColor, size: 32),
+            Icon(Icons.card_giftcard, color: Colors.grey.shade700, size: 32),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(reward.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text(reward.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87)),
                   const SizedBox(height: 4),
                   Text('${reward.pointCost} Poin', style: TextStyle(color: Colors.grey.shade600)),
                 ],
@@ -129,13 +134,17 @@ class LoyaltyScreen extends StatelessWidget {
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                              content: Text('Berhasil menukar ${reward.name}!'),
-                              backgroundColor: Colors.green),
+                            content: Text('Berhasil menukar ${reward.name}!'),
+                            backgroundColor: Colors.green,
+                          ),
                         );
                       }
                     }
                   : null,
-              child: const Text('Tukar'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey.shade700, // tombol abu gelap
+              ),
+              child: const Text('Tukar', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

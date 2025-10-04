@@ -9,8 +9,6 @@ import '../widgets/review_widgets.dart';
 import '../../domain/services/review_service.dart';
 import '../../data/models/review_model.dart';
 import 'package:marketplace2/features/home/domain/services/user_stats_service.dart';
-
-// <-- 1. IMPORT AUTH BLOC UNTUK MENGAKSES DATA PENGGUNA
 import 'package:marketplace2/features/auth/logic/auth_bloc.dart';
 
 class StorePageScreen extends StatefulWidget {
@@ -28,6 +26,11 @@ class _StorePageScreenState extends State<StorePageScreen> {
 
   double _newRating = 0.0;
   final TextEditingController _commentController = TextEditingController();
+
+  // 🎨 Definisi Warna Tema Abu-abu
+  final Color primaryGrey = Colors.grey.shade800;
+  final Color backgroundGrey = Colors.grey.shade100;
+  final Color cardBackground = Colors.white;
 
   @override
   void initState() {
@@ -49,25 +52,21 @@ class _StorePageScreenState extends State<StorePageScreen> {
       );
       return;
     }
-    
-    // --- 2. AMBIL STATE DARI AUTH BLOC ---
+
     final authState = context.read<AuthBloc>().state;
     String username = 'Pengguna'; // Nama default
     String avatarInitial = 'P'; // Inisial default
 
-    // Pastikan pengguna sudah login
     if (authState is AuthSuccess) {
       username = authState.user.fullName;
       if (username.isNotEmpty) {
         avatarInitial = username[0].toUpperCase();
       }
     }
-    // --- AKHIR PENGAMBILAN STATE ---
 
     final newReview = Review(
       id: DateTime.now().toString(),
       productId: productId,
-      // --- 3. GUNAKAN NAMA DAN INISIAL YANG SUDAH DIAMBIL ---
       username: username,
       avatarInitial: avatarInitial,
       rating: _newRating,
@@ -91,8 +90,8 @@ class _StorePageScreenState extends State<StorePageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ... sisa kode tidak berubah
     return Scaffold(
+      backgroundColor: backgroundGrey, // Background abu-abu muda
       body: CustomScrollView(
         slivers: [
           _buildAppBar(),
@@ -106,116 +105,10 @@ class _StorePageScreenState extends State<StorePageScreen> {
     );
   }
 
-  // --- Sisa file di bawah ini tidak ada perubahan ---
-
-  Widget _buildAddReviewFormSliver() {
-    return FutureBuilder<List<ProductModel>>(
-      future: _productsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          final firstProductId = snapshot.data!.first.id;
-
-          return SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Divider(height: 32),
-                  const Text(
-                    "Tulis Ulasan Anda",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text('Rating Anda:'),
-                  Row(
-                    children: List.generate(5, (index) {
-                      return IconButton(
-                        onPressed: () => setState(() => _newRating = index + 1.0),
-                        icon: Icon(
-                          index < _newRating ? Icons.star : Icons.star_border,
-                          color: Colors.amber,
-                          size: 32,
-                        ),
-                      );
-                    }),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _commentController,
-                    maxLines: 4,
-                    decoration: const InputDecoration(
-                      hintText: "Bagaimana pendapat Anda tentang produk ini?",
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => _submitReview(firstProductId),
-                    style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
-                    child: const Text("Kirim Ulasan"),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-        return const SliverToBoxAdapter(child: SizedBox.shrink());
-      },
-    );
-  }
-
-  Widget _buildProductCard(BuildContext context, ProductModel product) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      elevation: 2,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Image.asset(
-            product.imageUrl,
-            height: 120,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                height: 120,
-                color: Colors.grey.shade200,
-                child: Center(child: Icon(Icons.broken_image_outlined, size: 40, color: Colors.grey.shade500)),
-              );
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis,),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              AppFormatter.formatRupiah(product.price),
-              style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8,0,8,8),
-            child: ElevatedButton(
-              onPressed: () {
-                context.read<CartBloc>().add(AddProductToCart(product));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${product.name} ditambahkan!'), duration: const Duration(seconds: 1), backgroundColor: Colors.green),
-                );
-              },
-              child: const Text('+ Keranjang'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-  
   SliverAppBar _buildAppBar() {
     return SliverAppBar(
       automaticallyImplyLeading: true,
+      backgroundColor: primaryGrey, // AppBar abu-abu gelap (untuk kontras)
       expandedHeight: 200.0,
       floating: false,
       pinned: true,
@@ -236,13 +129,15 @@ class _StorePageScreenState extends State<StorePageScreen> {
               return Image.asset(
                 snapshot.data!.bannerUrl,
                 fit: BoxFit.cover,
+                // Tambahkan overlay gelap pada banner
                 color: Colors.black.withOpacity(0.3),
                 colorBlendMode: BlendMode.darken,
                 errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.error, color: Colors.white)),
               );
             }
             return Container(
-              color: Theme.of(context).primaryColor.withOpacity(0.5),
+              // Gunakan abu-abu untuk background jika gambar gagal
+              color: primaryGrey.withOpacity(0.5), 
               child: const Center(child: CircularProgressIndicator(color: Colors.white)),
             );
           },
@@ -255,7 +150,13 @@ class _StorePageScreenState extends State<StorePageScreen> {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
-        child: Text(title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+        child: Text(
+          title, 
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold, 
+            color: primaryGrey // Judul bagian abu-abu gelap
+          ),
+        ),
       ),
     );
   }
@@ -265,7 +166,7 @@ class _StorePageScreenState extends State<StorePageScreen> {
       future: _productsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
+          return SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: primaryGrey)));
         }
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const SliverFillRemaining(child: Center(child: Text('Toko ini belum memiliki produk.')));
@@ -288,6 +189,68 @@ class _StorePageScreenState extends State<StorePageScreen> {
     );
   }
 
+  Widget _buildProductCard(BuildContext context, ProductModel product) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      elevation: 2,
+      color: cardBackground, // Card putih
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Image.asset(
+            product.imageUrl,
+            height: 120,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                height: 120,
+                color: Colors.grey.shade200,
+                child: Center(child: Icon(Icons.broken_image_outlined, size: 40, color: Colors.grey.shade500)),
+              );
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              product.name, 
+              style: TextStyle(fontWeight: FontWeight.bold, color: primaryGrey), // Teks abu-abu gelap
+              maxLines: 2, 
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              AppFormatter.formatRupiah(product.price),
+              style: TextStyle(color: primaryGrey, fontWeight: FontWeight.bold), // Harga abu-abu gelap
+            ),
+          ),
+          const Spacer(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8,0,8,8),
+            child: ElevatedButton(
+              onPressed: () {
+                context.read<CartBloc>().add(AddProductToCart(product));
+                // Notifikasi sukses tetap hijau
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${product.name} ditambahkan!'), duration: const Duration(seconds: 1), backgroundColor: Colors.green),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryGrey, // Tombol abu-abu gelap
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text('+ Keranjang'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildReviewSection() {
     return FutureBuilder<List<ProductModel>>(
       future: _productsFuture,
@@ -297,10 +260,10 @@ class _StorePageScreenState extends State<StorePageScreen> {
           final reviews = ReviewService.getReviewsForProduct(firstProductId);
 
           if (reviews.isEmpty) {
-            return const SliverToBoxAdapter(
+            return SliverToBoxAdapter(
               child: Center(child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text('Belum ada ulasan untuk produk di toko ini.'),
+                padding: const EdgeInsets.all(16.0),
+                child: Text('Belum ada ulasan untuk produk di toko ini.', style: TextStyle(color: Colors.grey.shade600)),
               )),
             );
           }
@@ -309,8 +272,76 @@ class _StorePageScreenState extends State<StorePageScreen> {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                (context, index) => ReviewCard(review: reviews[index]),
+                // Catatan: ReviewCard harus mengadopsi tema abu-abu secara internal
+                (context, index) => ReviewCard(review: reviews[index]), 
                 childCount: reviews.length,
+              ),
+            ),
+          );
+        }
+        return const SliverToBoxAdapter(child: SizedBox.shrink());
+      },
+    );
+  }
+
+  Widget _buildAddReviewFormSliver() {
+    return FutureBuilder<List<ProductModel>>(
+      future: _productsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          final firstProductId = snapshot.data!.first.id;
+
+          return SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Divider(height: 32, color: Colors.grey.shade300), // Divider abu-abu
+                  Text(
+                    "Tulis Ulasan Anda",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryGrey), // Teks abu-abu gelap
+                  ),
+                  const SizedBox(height: 16),
+                  Text('Rating Anda:', style: TextStyle(color: primaryGrey)),
+                  Row(
+                    children: List.generate(5, (index) {
+                      return IconButton(
+                        onPressed: () => setState(() => _newRating = index + 1.0),
+                        icon: Icon(
+                          index < _newRating ? Icons.star : Icons.star_border,
+                          color: Colors.amber, // Bintang tetap emas
+                          size: 32,
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _commentController,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      hintText: "Bagaimana pendapat Anda tentang produk ini?",
+                      border: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade400)),
+                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade400)),
+                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: primaryGrey, width: 2)),
+                      fillColor: Colors.white,
+                      filled: true
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => _submitReview(firstProductId),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryGrey, // Tombol abu-abu gelap
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: const Text("Kirim Ulasan"),
+                  ),
+                ],
               ),
             ),
           );

@@ -12,6 +12,7 @@ class LoginScreen extends StatelessWidget {
     final passwordController = TextEditingController();
 
     return Scaffold(
+      backgroundColor: Colors.grey[600], // 🔹 Background abu-abu
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
@@ -32,17 +33,61 @@ class LoginScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(Icons.store, size: 80, color: Theme.of(context).primaryColor),
+                    Icon(Icons.store,
+                        size: 80, color: Colors.black), // 🔹 hitam biar kontras
                     const SizedBox(height: 16),
-                    const Text('Marketplace', textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                    const Text(
+                      'Marketplace',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 32, // 🔹 lebih besar biar mirip gambar
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Serif',
+                        color: Colors.black,
+                      ),
+                    ),
                     const SizedBox(height: 48),
-                    TextFormField(controller: emailController, decoration: const InputDecoration(labelText: 'Email'), keyboardType: TextInputType.emailAddress),
+                    TextFormField(
+                      controller: emailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Email or Phone',
+                        prefixIcon: Icon(Icons.person),
+                        filled: true,
+                        fillColor: Colors.white, // 🔹 kotak input putih
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(30)), // oval
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                    ),
                     const SizedBox(height: 16),
-                    TextFormField(controller: passwordController, decoration: const InputDecoration(labelText: 'Password'), obscureText: true),
+                    TextFormField(
+                      controller: passwordController,
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        prefixIcon: Icon(Icons.lock),
+                        filled: true,
+                        fillColor: Colors.white, // 🔹 kotak input putih
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(30)), // oval
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      obscureText: true,
+                    ),
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: TextButton(onPressed: () => context.go('/forgot-password'), child: const Text('Forgot Password?')),
+                      child: TextButton(
+                        onPressed: () => context.go('/forgot-password'),
+                        child: const Text(
+                          'Forgot Password?',
+                          style: TextStyle(color: Colors.black), // 🔹 hitam
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 24),
                     state is AuthLoading
@@ -54,12 +99,32 @@ class LoginScreen extends StatelessWidget {
                                     password: passwordController.text,
                                   ));
                             },
-                            style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-                            child: const Text('Login'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Colors.grey[300], // 🔹 tombol abu-abu muda
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(30), // oval
+                              ),
+                            ),
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(color: Colors.black), // 🔹 teks hitam
+                            ),
                           ),
                     const SizedBox(height: 16),
-                    const Text('or', textAlign: TextAlign.center),
-                    TextButton(onPressed: () => context.go('/register'), child: const Text('Create an account')),
+                    const Text('or',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.black)), // 🔹 hitam
+                    TextButton(
+                      onPressed: () => context.go('/register'),
+                      child: const Text(
+                        'Create an account',
+                        style: TextStyle(color: Colors.black), // 🔹 hitam
+                      ),
+                    ),
                   ],
                 ),
               ),

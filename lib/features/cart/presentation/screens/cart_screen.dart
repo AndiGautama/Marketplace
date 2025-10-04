@@ -8,7 +8,6 @@ import 'package:marketplace2/features/cart/logic/cart_bloc.dart';
 import 'package:marketplace2/features/history/data/models/transaction_model.dart';
 import 'package:marketplace2/features/history/data/repositories/history_repository.dart';
 import 'package:marketplace2/features/wallet/logic/wallet_bloc.dart';
-// <-- 1. IMPORT SERVICE STATISTIK DI SINI
 import 'package:marketplace2/features/home/domain/services/user_stats_service.dart';
 
 class CartScreen extends StatelessWidget {
@@ -16,9 +15,20 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Definisi Warna Tema Abu-abu
+    final Color primaryGrey = Colors.grey.shade800;
+    final Color backgroundGrey = Colors.grey.shade100;
+    final Color cardBackground = Colors.white;
+    final Color appBarBackground = Colors.grey.shade200;
+
     return Scaffold(
+      backgroundColor: backgroundGrey, // Background abu-abu muda
       appBar: AppBar(
-        title: const Text('Keranjang Belanja'),
+        title: Text('Keranjang Belanja', style: TextStyle(color: primaryGrey, fontWeight: FontWeight.bold)),
+        backgroundColor: appBarBackground,
+        foregroundColor: primaryGrey,
+        elevation: 0,
+        surfaceTintColor: appBarBackground,
       ),
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
@@ -44,11 +54,11 @@ class CartScreen extends StatelessWidget {
                     itemCount: state.items.length,
                     itemBuilder: (context, index) {
                       final cartItem = state.items[index];
-                      return _buildCartItemCard(context, cartItem);
+                      return _buildCartItemCard(context, cartItem, cardBackground);
                     },
                   ),
                 ),
-                _buildCheckoutSection(context, state),
+                _buildCheckoutSection(context, state, primaryGrey),
               ],
             );
           }
@@ -58,9 +68,13 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCartItemCard(BuildContext context, CartItem cartItem) {
+  Widget _buildCartItemCard(BuildContext context, CartItem cartItem, Color cardBackground) {
+    // Warna Ikon Tombol
+    final Color primaryColor = Colors.grey.shade800;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12.0),
+      color: cardBackground, // Latar belakang kartu putih
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
@@ -73,7 +87,6 @@ class CartScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(10),
-                // Menampilkan gambar produk di keranjang
                 image: DecorationImage(
                   image: AssetImage(cartItem.product.imageUrl),
                   fit: BoxFit.cover,
@@ -85,11 +98,12 @@ class CartScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(cartItem.product.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text(cartItem.product.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
                   const SizedBox(height: 8),
                   Text(
                     AppFormatter.formatRupiah(cartItem.product.price),
-                    style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: 15),
+                    // Gunakan warna abu-abu gelap untuk penekanan harga
+                    style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                 ],
               ),
@@ -97,12 +111,12 @@ class CartScreen extends StatelessWidget {
             Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.remove_circle_outline, color: Colors.grey),
+                  icon: const Icon(Icons.remove_circle_outline, color: Colors.grey), // Abu-abu standar
                   onPressed: () => context.read<CartBloc>().add(DecrementCartItem(cartItem.product)),
                 ),
-                Text('${cartItem.quantity}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text('${cartItem.quantity}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
                 IconButton(
-                  icon: Icon(Icons.add_circle_outline, color: Theme.of(context).primaryColor),
+                  icon: Icon(Icons.add_circle_outline, color: primaryColor), // Abu-abu gelap
                   onPressed: () => context.read<CartBloc>().add(IncrementCartItem(cartItem.product)),
                 ),
               ],
@@ -113,13 +127,13 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCheckoutSection(BuildContext context, CartLoaded cartState) {
+  Widget _buildCheckoutSection(BuildContext context, CartLoaded cartState, Color primaryGrey) {
     final totalPrice = cartState.totalPrice;
 
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white, // Bagian checkout tetap putih untuk kontras
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(16),
           topRight: Radius.circular(16),
@@ -140,10 +154,10 @@ class CartScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Total Belanja', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const Text('Total Belanja', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
               Text(
                 AppFormatter.formatRupiah(totalPrice), // Format harga
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryGrey), // Harga total abu-abu gelap
               ),
             ],
           ),
@@ -160,7 +174,7 @@ class CartScreen extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Saldo Anda tidak cukup!'), backgroundColor: Colors.red),
                   );
-                  return; // Hentikan proses jika saldo tidak cukup
+                  return;
                 }
 
                 // 2. Hitung Poin
@@ -179,20 +193,18 @@ class CartScreen extends StatelessWidget {
 
                 // 4. Kirim Event untuk memproses pembelian (kurangi saldo & tambah poin)
                 context.read<WalletBloc>().add(ProcessPurchase(
-                    amountToSubtract: totalPrice,
-                    pointsToAdd: pointsEarned,
-                    userEmail: authState.user.email,
-                  ));
-                
+                      amountToSubtract: totalPrice,
+                      pointsToAdd: pointsEarned,
+                      userEmail: authState.user.email,
+                    ));
+
                 // 5. Kirim Event untuk Kosongkan Keranjang
                 context.read<CartBloc>().add(ClearCart());
 
-                // ==================================================
-                // <-- 2. TAMBAHKAN PEMANGGILAN SERVICE DI SINI
-                // ==================================================
+                // 6. TAMBAHKAN PEMANGGILAN SERVICE DI SINI
                 UserStatsService.instance.addOrder(totalPrice);
-                
-                // 6. Tampilkan Notifikasi Sukses
+
+                // 7. Tampilkan Notifikasi Sukses
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Pembelian berhasil! Anda mendapatkan $pointsEarned poin.'),
@@ -200,7 +212,7 @@ class CartScreen extends StatelessWidget {
                   ),
                 );
 
-                // 7. Arahkan ke Halaman Home
+                // 8. Arahkan ke Halaman Home
                 context.go('/');
 
               } else {
@@ -212,9 +224,13 @@ class CartScreen extends StatelessWidget {
               }
             },
             style: ElevatedButton.styleFrom(
+              backgroundColor: primaryGrey, // Tombol abu-abu gelap
+              foregroundColor: Colors.white, // Teks tombol putih
               padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              elevation: 0,
             ),
-            child: const Text('CHECKOUT'),
+            child: const Text('CHECKOUT', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ),
         ],
       ),

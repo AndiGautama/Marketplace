@@ -14,9 +14,13 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade100, // abu-abu muda untuk background
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Profil Saya'),
+        backgroundColor: Colors.grey.shade200, // abu-abu untuk AppBar
+        foregroundColor: Colors.black87, // teks tetap jelas
+        elevation: 0,
       ),
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
@@ -31,19 +35,18 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildLoggedInView(BuildContext context, AuthSuccess authState) {
-    // --- PERUBAHAN: Menggunakan ListView untuk layout yang lebih fleksibel ---
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
         CircleAvatar(
           radius: 50,
-          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.2),
+          backgroundColor: Colors.grey.shade300, // avatar abu-abu
           child: Text(
             authState.user.fullName.isNotEmpty ? authState.user.fullName[0].toUpperCase() : '?',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 48,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColor,
+              color: Colors.black87, // teks gelap di abu-abu
             ),
           ),
         ),
@@ -51,7 +54,7 @@ class ProfileScreen extends StatelessWidget {
         Text(
           authState.user.fullName,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
         ),
         Text(
           authState.user.email,
@@ -59,7 +62,7 @@ class ProfileScreen extends StatelessWidget {
           style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
         ),
         const SizedBox(height: 32),
-        const Divider(),
+        Divider(color: Colors.grey.shade400),
         const SizedBox(height: 16),
         BlocBuilder<WalletBloc, WalletState>(
           builder: (context, walletState) {
@@ -76,11 +79,11 @@ class ProfileScreen extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-        
+
         // <-- 2. TAMBAHKAN WIDGET KARTU STATISTIK DI SINI
         const StatsCardWidget(),
 
-        const Divider(),
+        Divider(color: Colors.grey.shade400),
         const SizedBox(height: 16),
 
         // Tombol Logout
@@ -89,7 +92,7 @@ class ProfileScreen extends StatelessWidget {
             context.read<AuthBloc>().add(LogoutButtonPressed());
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.redAccent,
+            backgroundColor: Colors.grey.shade700, // abu-abu gelap
             padding: const EdgeInsets.symmetric(vertical: 12),
           ),
           child: const Text('Logout', style: TextStyle(color: Colors.white, fontSize: 16)),
@@ -103,7 +106,7 @@ class ProfileScreen extends StatelessWidget {
       children: [
         Text(title, style: TextStyle(fontSize: 16, color: Colors.grey.shade600)),
         const SizedBox(height: 4),
-        Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87)),
       ],
     );
   }
@@ -129,9 +132,10 @@ class ProfileScreen extends StatelessWidget {
                 context.go('/login');
               },
               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey.shade700, // abu-abu gelap
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-              child: const Text('Login atau Daftar'),
+              child: const Text('Login atau Daftar', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

@@ -17,22 +17,42 @@ class TopUpScreen extends StatelessWidget {
     final amountController = TextEditingController();
     final quickAmounts = [50000.0, 100000.0, 200000.0, 500000.0];
 
+    // 🎨 Definisi Warna Tema Abu-abu
+    final Color primaryGrey = Colors.grey.shade800;
+    final Color backgroundGrey = Colors.grey.shade100;
+    final Color appBarBackground = Colors.grey.shade200;
+    final Color cardBackground = Colors.white;
+    final Color inputBorderColor = Colors.grey.shade400;
+
     return Scaffold(
+      backgroundColor: backgroundGrey, // Background abu-abu muda
       appBar: AppBar(
-        title: const Text('Top Up Saldo'),
+        title: Text('Top Up Saldo', style: TextStyle(color: primaryGrey, fontWeight: FontWeight.bold)),
+        backgroundColor: appBarBackground,
+        foregroundColor: primaryGrey,
+        elevation: 0,
+        surfaceTintColor: appBarBackground,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- BAGIAN BARU: SALDO SAAT INI ---
+            // --- BAGIAN SALDO SAAT INI ---
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: cardBackground,
                 borderRadius: BorderRadius.circular(15.0),
+                border: Border.all(color: Colors.grey.shade300),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.15),
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                  ),
+                ],
               ),
               child: BlocBuilder<WalletBloc, WalletState>(
                 builder: (context, state) {
@@ -45,7 +65,7 @@ class TopUpScreen extends StatelessWidget {
                     children: [
                       Text('Saldo Anda Saat Ini', style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
                       const SizedBox(height: 4),
-                      Text(currentBalance, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                      Text(currentBalance, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: primaryGrey)),
                     ],
                   );
                 },
@@ -54,7 +74,7 @@ class TopUpScreen extends StatelessWidget {
             const SizedBox(height: 32),
 
             // --- BAGIAN INPUT NOMINAL ---
-            const Text('Masukkan Jumlah Top Up', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            Text('Masukkan Jumlah Top Up', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: primaryGrey)),
             const SizedBox(height: 12),
             TextField(
               controller: amountController,
@@ -63,17 +83,22 @@ class TopUpScreen extends StatelessWidget {
                 FilteringTextInputFormatter.digitsOnly,
                 CurrencyInputFormatter(),
               ],
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              decoration: const InputDecoration(
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: primaryGrey),
+              decoration: InputDecoration(
                 hintText: '0',
                 prefixText: 'Rp ',
-                border: OutlineInputBorder(),
+                prefixStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: primaryGrey),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: inputBorderColor)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: inputBorderColor)),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: primaryGrey, width: 2)),
+                fillColor: cardBackground,
+                filled: true,
               ),
             ),
             const SizedBox(height: 24),
 
             // --- BAGIAN PILIH CEPAT ---
-            const Text('Pilih Cepat:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            Text('Pilih Cepat:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: primaryGrey)),
             const SizedBox(height: 12),
             GridView.count(
               crossAxisCount: 2,
@@ -86,6 +111,7 @@ class TopUpScreen extends StatelessWidget {
                 return _buildQuickAmountCard(
                   context,
                   amount: amount,
+                  primaryGrey: primaryGrey, // Meneruskan warna tema
                   onTap: () {
                     final formatter = NumberFormat.decimalPattern('id_ID');
                     amountController.text = formatter.format(amount);
@@ -98,57 +124,64 @@ class TopUpScreen extends StatelessWidget {
             const SizedBox(height: 48),
 
             // --- TOMBOL TOP UP ---
-            ElevatedButton(
-              onPressed: () {
-                final String cleanText = amountController.text.replaceAll('.', '');
-                final amount = double.tryParse(cleanText);
-                final authState = context.read<AuthBloc>().state;
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  final String cleanText = amountController.text.replaceAll('.', '');
+                  final amount = double.tryParse(cleanText);
+                  final authState = context.read<AuthBloc>().state;
 
-                if (authState is AuthSuccess) {
-                  if (amount != null && amount > 0) {
-                    final transaction = TransactionModel(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
-                      type: TransactionType.topUp,
-                      description: 'Isi Saldo',
-                      amountChange: amount,
-                      pointsChange: 0,
-                      date: DateTime.now(),
-                    );
-                    context.read<HistoryRepository>().addTransaction(authState.user.email, transaction);
+                  if (authState is AuthSuccess) {
+                    if (amount != null && amount > 0) {
+                      final transaction = TransactionModel(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        type: TransactionType.topUp,
+                        description: 'Isi Saldo',
+                        amountChange: amount,
+                        pointsChange: 0,
+                        date: DateTime.now(),
+                      );
+                      context.read<HistoryRepository>().addTransaction(authState.user.email, transaction);
 
-                    context.read<WalletBloc>().add(TopUpBalance(
-                          amount: amount,
-                          userEmail: authState.user.email,
-                        ));
+                      context.read<WalletBloc>().add(TopUpBalance(
+                            amount: amount,
+                            userEmail: authState.user.email,
+                          ));
 
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        SnackBar(
-                          content: Text('Top up sebesar ${AppFormatter.formatRupiah(amount)} berhasil!'),
-                          backgroundColor: Colors.green,
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          SnackBar(
+                            content: Text('Top up sebesar ${AppFormatter.formatRupiah(amount)} berhasil!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      context.go('/profile');
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Masukkan jumlah yang valid.'),
+                          backgroundColor: Colors.red,
                         ),
                       );
-                    context.go('/profile');
+                    }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Masukkan jumlah yang valid.'),
-                        backgroundColor: Colors.red,
-                      ),
+                      const SnackBar(content: Text('Sesi Anda berakhir, silakan login kembali.')),
                     );
+                    context.go('/login');
                   }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Sesi Anda berakhir, silakan login kembali.')),
-                  );
-                  context.go('/login');
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryGrey, // Tombol abu-abu gelap
+                  foregroundColor: Colors.white, // Teks tombol putih
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 0,
+                ),
+                child: const Text('Top Up Sekarang', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
-              child: const Text('Top Up Sekarang', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -160,6 +193,7 @@ class TopUpScreen extends StatelessWidget {
   Widget _buildQuickAmountCard(BuildContext context, {
     required double amount,
     required VoidCallback onTap,
+    required Color primaryGrey, // Menerima warna tema
   }) {
     return InkWell(
       onTap: onTap,
@@ -169,6 +203,14 @@ class TopUpScreen extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.grey.shade300),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: const Offset(0, 1),
+            ),
+          ],
         ),
         child: Center(
           child: Text(
@@ -176,7 +218,7 @@ class TopUpScreen extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
-              color: Theme.of(context).primaryColor,
+              color: primaryGrey, // Teks abu-abu gelap
             ),
           ),
         ),

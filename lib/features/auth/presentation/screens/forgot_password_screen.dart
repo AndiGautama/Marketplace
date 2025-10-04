@@ -11,18 +11,29 @@ class ForgotPasswordScreen extends StatelessWidget {
     final emailController = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0, foregroundColor: Colors.black),
+      backgroundColor: Colors.grey[600], // 🔹 Background abu-abu
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: Colors.black,
+      ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthPasswordResetEmailSent) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Instruksi reset password terkirim!'), backgroundColor: Colors.green),
+              const SnackBar(
+                content: Text('Instruksi reset password terkirim!'),
+                backgroundColor: Colors.green,
+              ),
             );
             context.go('/login'); // Kembali ke login setelah notifikasi
           }
-           if (state is AuthFailure) {
+          if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error), backgroundColor: Colors.red),
+              SnackBar(
+                content: Text(state.error),
+                backgroundColor: Colors.red,
+              ),
             );
           }
         },
@@ -33,22 +44,66 @@ class ForgotPasswordScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text('Forgot\nPassword?', textAlign: TextAlign.center, style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+                const Text(
+                  'Forgot\nPassword?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Serif',
+                    color: Colors.black, // 🔹 hitam
+                  ),
+                ),
                 const SizedBox(height: 16),
-                const Text("No worries, we'll send you reset instructions", textAlign: TextAlign.center, style: TextStyle(fontSize: 16, color: Colors.grey)),
+                const Text(
+                  "No worries, we'll send you reset instructions",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black87), // 🔹 abu tua
+                ),
                 const SizedBox(height: 48),
-                TextFormField(controller: emailController, decoration: const InputDecoration(labelText: 'Email'), keyboardType: TextInputType.emailAddress),
+                TextFormField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: Icon(Icons.email),
+                    filled: true,
+                    fillColor: Colors.white, // 🔹 kotak input putih
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)), // oval
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
                 const SizedBox(height: 32),
                 state is AuthLoading
                     ? const Center(child: CircularProgressIndicator())
                     : ElevatedButton(
                         onPressed: () {
-                          context.read<AuthBloc>().add(ForgotPasswordResetRequested(email: emailController.text));
+                          context.read<AuthBloc>().add(
+                              ForgotPasswordResetRequested(
+                                  email: emailController.text));
                         },
-                        style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-                        child: const Text('Reset Password'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[300], // 🔹 tombol abu-abu muda
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: const Text(
+                          'Reset Password',
+                          style: TextStyle(color: Colors.black), // 🔹 teks hitam
+                        ),
                       ),
-                TextButton(onPressed: () => context.go('/login'), child: const Text('Back to Login')),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => context.go('/login'),
+                  child: const Text(
+                    'Back to Login',
+                    style: TextStyle(color: Colors.black), // 🔹 teks hitam
+                  ),
+                ),
               ],
             ),
           );

@@ -15,6 +15,12 @@ class _StoreListScreenState extends State<StoreListScreen> {
   late Future<List<StoreModel>> _storesFuture;
   final MockStoreRepository storeRepository = MockStoreRepository();
 
+  // 🎨 Warna Tema Abu-abu
+  final Color primaryGrey = Colors.grey.shade800;
+  final Color backgroundGrey = Colors.grey.shade100;
+  final Color appBarBackground = Colors.grey.shade200;
+  final Color cardBackground = Colors.white;
+
   @override
   void initState() {
     super.initState();
@@ -24,17 +30,35 @@ class _StoreListScreenState extends State<StoreListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundGrey,
       appBar: AppBar(
-        title: Text(widget.categoryName),
+        title: Text(
+          widget.categoryName,
+          style: TextStyle(
+            color: primaryGrey,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: appBarBackground,
+        foregroundColor: primaryGrey,
+        elevation: 0,
+        surfaceTintColor: appBarBackground,
       ),
       body: FutureBuilder<List<StoreModel>>(
         future: _storesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(color: primaryGrey),
+            );
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Tidak ada toko dalam kategori ini.'));
+            return Center(
+              child: Text(
+                'Tidak ada toko dalam kategori ini.',
+                style: TextStyle(color: Colors.grey.shade600),
+              ),
+            );
           }
           final stores = snapshot.data!;
           return ListView.builder(
@@ -50,30 +74,39 @@ class _StoreListScreenState extends State<StoreListScreen> {
     );
   }
 
-  // --- PERUBAHAN UTAMA ADA DI DALAM FUNGSI INI ---
   Widget _buildStoreCard(BuildContext context, StoreModel store) {
     return Card(
       clipBehavior: Clip.antiAlias,
       margin: const EdgeInsets.only(bottom: 16.0),
+      color: cardBackground,
       elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: Colors.grey.shade300,
+          width: 1,
+        ),
+      ),
       child: InkWell(
         onTap: () => GoRouter.of(context).push('/stores/${store.id}'),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Ganti Container abu-abu dengan Image.asset
+            // Banner Toko
             Image.asset(
               store.bannerUrl,
               height: 120,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                // Tampilan jika gambar gagal dimuat
                 return Container(
                   height: 120,
                   color: Colors.grey.shade300,
                   child: const Center(
-                    child: Icon(Icons.broken_image_outlined, color: Colors.grey, size: 40),
+                    child: Icon(
+                      Icons.broken_image_outlined,
+                      color: Colors.grey,
+                      size: 40,
+                    ),
                   ),
                 );
               },
@@ -82,7 +115,11 @@ class _StoreListScreenState extends State<StoreListScreen> {
               padding: const EdgeInsets.all(12.0),
               child: Text(
                 store.name,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: primaryGrey,
+                ),
               ),
             ),
           ],

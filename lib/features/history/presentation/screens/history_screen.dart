@@ -18,6 +18,19 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> {
   late Future<List<TransactionModel>> _transactionsFuture;
 
+  // 🎨 Definisi Warna Tema Abu-abu
+  final Color primaryGrey = Colors.grey.shade800;
+  final Color backgroundGrey = Colors.grey.shade100;
+  final Color appBarBackground = Colors.grey.shade200;
+  final Color cardBackground = Colors.white;
+  final Color secondaryText = Colors.grey.shade600;
+
+  // Warna Fungsional (dipertahankan untuk kejelasan transaksi)
+  final Color purchaseColor = Colors.red.shade700;
+  final Color topUpColor = Colors.green.shade600;
+  final Color pointRedemptionColor = Colors.orange.shade600;
+  final Color pointEarnedColor = Colors.green.shade500;
+
   @override
   void initState() {
     super.initState();
@@ -47,25 +60,29 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final authState = context.read<AuthBloc>().state;
 
     return Scaffold(
+      backgroundColor: backgroundGrey, // Background abu-abu muda
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: primaryGrey),
           onPressed: () => context.go('/'),
         ),
-        title: Text(_getPageTitle()),
+        title: Text(_getPageTitle(), style: TextStyle(color: primaryGrey, fontWeight: FontWeight.bold)),
+        backgroundColor: appBarBackground,
+        elevation: 0,
+        surfaceTintColor: appBarBackground,
       ),
       body: authState is AuthSuccess
           ? FutureBuilder<List<TransactionModel>>(
               future: _transactionsFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(child: CircularProgressIndicator(color: primaryGrey));
                 }
                 if (snapshot.hasError) {
-                  return Center(child: Text('Terjadi error: ${snapshot.error}'));
+                  return Center(child: Text('Terjadi error: ${snapshot.error}', style: TextStyle(color: secondaryText)));
                 }
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('Tidak ada riwayat.'));
+                  return Center(child: Text('Tidak ada riwayat.', style: TextStyle(color: secondaryText)));
                 }
                 
                 var transactions = snapshot.data!;
@@ -74,7 +91,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 }
 
                 if (transactions.isEmpty) {
-                  return const Center(child: Text('Tidak ada riwayat untuk kategori ini.'));
+                  return Center(child: Text('Tidak ada riwayat untuk kategori ini.', style: TextStyle(color: secondaryText)));
                 }
 
                 return ListView.builder(
@@ -86,7 +103,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 );
               },
             )
-          : const Center(child: Text('Silakan login untuk melihat riwayat.')),
+          : Center(child: Text('Silakan login untuk melihat riwayat.', style: TextStyle(color: secondaryText))),
     );
   }
 
@@ -99,7 +116,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     switch (trx.type) {
       case TransactionType.purchase:
         icon = Icons.shopping_bag_outlined;
-        color = Colors.red;
+        color = purchaseColor; // Merah
         amountString = '- ${AppFormatter.formatRupiah(-trx.amountChange)}';
         if (trx.pointsChange > 0) {
           pointString = '+${trx.pointsChange} Poin';
@@ -107,24 +124,41 @@ class _HistoryScreenState extends State<HistoryScreen> {
         break;
       case TransactionType.topUp:
         icon = Icons.account_balance_wallet_outlined;
-        color = Colors.green;
+        color = topUpColor; // Hijau
         amountString = '+ ${AppFormatter.formatRupiah(trx.amountChange)}';
         break;
       case TransactionType.pointRedemption:
         icon = Icons.star_outline;
-        color = Colors.orange;
+        color = pointRedemptionColor; // Oranye
         amountString = '${trx.pointsChange} Poin';
         break;
     }
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      color: cardBackground, // Card putih
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade300)
+      ),
       child: ListTile(
-        leading: Icon(icon, color: color, size: 32),
-        title: Text(trx.description, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(DateFormat('d MMMM yyyy, HH:mm', 'id_ID').format(trx.date)),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1), // Latar belakang ikon transparan
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: color, size: 24),
+        ),
+        title: Text(
+          trx.description, 
+          style: TextStyle(fontWeight: FontWeight.bold, color: primaryGrey)
+        ),
+        subtitle: Text(
+          DateFormat('d MMMM yyyy, HH:mm', 'id_ID').format(trx.date),
+          style: TextStyle(color: secondaryText)
+        ),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -137,7 +171,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               const SizedBox(height: 4),
               Text(
                 pointString,
-                style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w500),
+                style: TextStyle(color: pointEarnedColor, fontWeight: FontWeight.w500, fontSize: 12),
               )
             ]
           ],
