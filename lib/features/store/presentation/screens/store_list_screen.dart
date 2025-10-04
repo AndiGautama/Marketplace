@@ -12,8 +12,8 @@ class StoreListScreen extends StatefulWidget {
 }
 
 class _StoreListScreenState extends State<StoreListScreen> {
-  final MockStoreRepository storeRepository = MockStoreRepository();
   late Future<List<StoreModel>> _storesFuture;
+  final MockStoreRepository storeRepository = MockStoreRepository();
 
   @override
   void initState() {
@@ -25,12 +25,6 @@ class _StoreListScreenState extends State<StoreListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // --- PERUBAHAN DI SINI ---
-        // Kita tidak perlu tombol manual lagi, AppBar akan membuatnya secara otomatis
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back),
-        //   onPressed: () => context.pop(),
-        // ),
         title: Text(widget.categoryName),
       ),
       body: FutureBuilder<List<StoreModel>>(
@@ -39,45 +33,60 @@ class _StoreListScreenState extends State<StoreListScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Belum ada toko di kategori ini.'));
+            return const Center(child: Text('Tidak ada toko dalam kategori ini.'));
           }
-
           final stores = snapshot.data!;
           return ListView.builder(
             padding: const EdgeInsets.all(16.0),
             itemCount: stores.length,
             itemBuilder: (context, index) {
               final store = stores[index];
-              return Card(
-                margin: const EdgeInsets.only(bottom: 16),
-                clipBehavior: Clip.antiAlias,
-                child: InkWell(
-                  onTap: () {
-                    context.push('/stores/${store.id}');
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                        height: 120,
-                        color: Colors.grey.shade300,
-                        child: Center(child: Text('${store.name} Banner')),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Text(store.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
-                ),
-              );
+              return _buildStoreCard(context, store);
             },
           );
         },
+      ),
+    );
+  }
+
+  // --- PERUBAHAN UTAMA ADA DI DALAM FUNGSI INI ---
+  Widget _buildStoreCard(BuildContext context, StoreModel store) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      margin: const EdgeInsets.only(bottom: 16.0),
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: () => GoRouter.of(context).push('/stores/${store.id}'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Ganti Container abu-abu dengan Image.asset
+            Image.asset(
+              store.bannerUrl,
+              height: 120,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                // Tampilan jika gambar gagal dimuat
+                return Container(
+                  height: 120,
+                  color: Colors.grey.shade300,
+                  child: const Center(
+                    child: Icon(Icons.broken_image_outlined, color: Colors.grey, size: 40),
+                  ),
+                );
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text(
+                store.name,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
