@@ -19,16 +19,58 @@ class StorePageScreen extends StatefulWidget {
 
 class _StorePageScreenState extends State<StorePageScreen> {
   final MockStoreRepository storeRepository = MockStoreRepository();
-  final ReviewService reviewService = ReviewService();
-  
   late Future<StoreModel> _storeFuture;
   late Future<List<ProductModel>> _productsFuture;
+
+  // --- STATE BARU UNTUK FORM ULASAN ---
+  double _newRating = 0.0;
+  final TextEditingController _commentController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _storeFuture = storeRepository.getStoreById(widget.storeId);
     _productsFuture = storeRepository.getProductsByStoreId(widget.storeId);
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose(); // Membersihkan controller
+    super.dispose();
+  }
+
+  // --- FUNGSI BARU UNTUK MENGIRIM ULASAN ---
+  void _submitReview(String productId) {
+    // Validasi
+    if (_newRating == 0.0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Harap berikan rating bintang.'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
+    // Buat objek ulasan baru
+    final newReview = Review(
+      id: DateTime.now().toString(),
+      productId: productId,
+      username: 'Jovian (Anda)',
+      avatarInitial: 'J',
+      rating: _newRating,
+      comment: _commentController.text,
+      date: DateTime.now(),
+    );
+
+    // Tambahkan ulasan & refresh UI
+    ReviewService.addReview(newReview);
+    setState(() {
+      _commentController.clear();
+      _newRating = 0.0;
+      FocusScope.of(context).unfocus(); // Menutup keyboard
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Ulasan berhasil dikirim!'), backgroundColor: Colors.green),
+    );
   }
 
   @override
@@ -41,11 +83,123 @@ class _StorePageScreenState extends State<StorePageScreen> {
           _buildProductGrid(),
           _buildSectionTitle("Ulasan Produk"),
           _buildReviewSection(), 
+          // --- MENAMPILKAN FORM ULASAN DI SINI ---
+          _buildAddReviewFormSliver(),
         ],
       ),
     );
   }
 
+  // --- WIDGET BARU UNTUK FORM ULASAN ---
+  Widget _buildAddReviewFormSliver() {
+    return FutureBuilder<List<ProductModel>>(
+      future: _productsFuture,
+      builder: (context, snapshot) {
+        // Hanya tampilkan form jika produk sudah dimuat
+        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          final firstProductId = snapshot.data!.first.id;
+
+          return SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Divider(height: 32),
+                  const Text(
+                    "Tulis Ulasan Anda",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text('Rating Anda:'),
+                  Row(
+                    children: List.generate(5, (index) {
+                      return IconButton(
+                        onPressed: () => setState(() => _newRating = index + 1.0),
+                        icon: Icon(
+                          index < _newRating ? Icons.star : Icons.star_border,
+                          color: Colors.amber,
+                          size: 32,
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _commentController,
+                    maxLines: 4,
+                    decoration: const InputDecoration(
+                      hintText: "Bagaimana pendapat Anda tentang produk ini?",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => _submitReview(firstProductId),
+                    style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
+                    child: const Text("Kirim Ulasan"),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        // Jika tidak ada produk, jangan tampilkan form
+        return const SliverToBoxAdapter(child: SizedBox.shrink());
+      },
+    );
+  }
+
+  // --- FUNGSI _buildProductCard DIPERBARUI (Tombol Dihapus) ---
+  Widget _buildProductCard(BuildContext context, ProductModel product) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      elevation: 2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Image.asset(
+            product.imageUrl,
+            height: 120,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                height: 120,
+                color: Colors.grey.shade200,
+                child: Center(child: Icon(Icons.broken_image_outlined, size: 40, color: Colors.grey.shade500)),
+              );
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis,),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              AppFormatter.formatRupiah(product.price),
+              style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const Spacer(), // Spacer digunakan untuk mendorong tombol ke bawah
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8,0,8,8),
+            child: ElevatedButton(
+              onPressed: () {
+                context.read<CartBloc>().add(AddProductToCart(product));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${product.name} ditambahkan!'), duration: const Duration(seconds: 1), backgroundColor: Colors.green),
+                );
+              },
+              child: const Text('+ Keranjang'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  // -- Sisanya tidak berubah --
   SliverAppBar _buildAppBar() {
     return SliverAppBar(
       automaticallyImplyLeading: true,
@@ -66,7 +220,6 @@ class _StorePageScreenState extends State<StorePageScreen> {
           future: _storeFuture,
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data!.bannerUrl.isNotEmpty) {
-              // --- MENGGUNAKAN Image.asset UNTUK BANNER ---
               return Image.asset(
                 snapshot.data!.bannerUrl,
                 fit: BoxFit.cover,
@@ -128,7 +281,7 @@ class _StorePageScreenState extends State<StorePageScreen> {
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           final firstProductId = snapshot.data!.first.id;
-          final reviews = reviewService.getReviewsForProduct(firstProductId);
+          final reviews = ReviewService.getReviewsForProduct(firstProductId);
 
           if (reviews.isEmpty) {
             return const SliverToBoxAdapter(
@@ -151,55 +304,6 @@ class _StorePageScreenState extends State<StorePageScreen> {
         }
         return const SliverToBoxAdapter(child: SizedBox.shrink());
       },
-    );
-  }
-
-  Widget _buildProductCard(BuildContext context, ProductModel product) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      elevation: 2,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // --- MENGGUNAKAN Image.asset UNTUK PRODUK ---
-          Image.asset(
-            product.imageUrl,
-            height: 120,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                height: 120,
-                color: Colors.grey.shade200,
-                child: Center(child: Icon(Icons.broken_image_outlined, size: 40, color: Colors.grey.shade500)),
-              );
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis,),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              AppFormatter.formatRupiah(product.price),
-              style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {
-                context.read<CartBloc>().add(AddProductToCart(product));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${product.name} ditambahkan!'), duration: const Duration(seconds: 1), backgroundColor: Colors.green),
-                );
-              },
-              child: const Text('+ Keranjang'),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

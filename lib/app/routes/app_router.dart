@@ -16,42 +16,27 @@ import 'package:marketplace2/features/store/presentation/screens/store_list_scre
 import 'package:marketplace2/features/store/presentation/screens/store_page_screen.dart';
 import 'package:marketplace2/features/wallet/presentation/screens/topup_screen.dart';
 
-// Kunci global untuk navigator, berguna untuk akses di luar konteks widget jika diperlukan.
+// Import untuk halaman review dan modelnya sudah tidak diperlukan lagi di sini
+
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 class AppRouter {
   static final GoRouter router = GoRouter(
     navigatorKey: _rootNavigatorKey,
-    // Aplikasi akan dimulai dari Halaman Home untuk mode "Tamu"
     initialLocation: '/',
     routes: [
-      // Rute-rute ini berada di luar ShellRoute, jadi tidak akan ada bottom navigation bar.
+      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+      GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
+      GoRoute(path: '/forgot-password', builder: (context, state) => const ForgotPasswordScreen()),
+      GoRoute(path: '/search', builder: (context, state) => const SearchScreen()),
       GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginScreen(),
-      ),
-      GoRoute(
-        path: '/register',
-        builder: (context, state) => const RegisterScreen(),
-      ),
-      GoRoute(
-        path: '/forgot-password',
-        builder: (context, state) => const ForgotPasswordScreen(),
-      ),
-       GoRoute(
-        path: '/search',
-        builder: (context, state) => const SearchScreen(),
-      ),
-       GoRoute(
         path: '/history/:type',
         builder: (context, state) {
           final typeName = state.pathParameters['type']!;
-          // Konversi nama string dari URL kembali menjadi enum TransactionType
           final filter = TransactionType.values.byName(typeName);
           return HistoryScreen(filter: filter);
         },
       ),
-       // Rute untuk Halaman Daftar Toko
       GoRoute(
         path: '/categories/:categoryName',
         builder: (context, state) {
@@ -59,7 +44,6 @@ class AppRouter {
           return StoreListScreen(categoryName: categoryName);
         },
       ),
-       // Rute untuk Halaman Toko Spesifik
       GoRoute(
         path: '/stores/:storeId',
         builder: (context, state) {
@@ -67,46 +51,28 @@ class AppRouter {
           return StorePageScreen(storeId: storeId);
         },
       ),
+      
+      // Rute '/add-review' dan '/tiers' sudah dihapus
 
-      // ShellRoute membungkus semua rute di dalamnya dengan widget MainShell.
-      // Ini memastikan BottomAppBar selalu terlihat di halaman-halaman ini.
       ShellRoute(
         builder: (context, state, child) {
           return MainShell(child: child);
         },
         routes: [
-          // Rute untuk Halaman Home
           GoRoute(
             path: '/',
             builder: (context, state) => const HomeScreen(),
-            // Sub-rute untuk Halaman Kategori, dapat diakses dari Home
             routes: [
               GoRoute(
-                path: 'categories', // URL akan menjadi /categories
+                path: 'categories',
                 builder: (context, state) => const CategoryScreen(),
               ),
             ],
           ),
-          // Rute untuk Halaman Keranjang
-          GoRoute(
-            path: '/cart',
-            builder: (context, state) => const CartScreen(),
-          ),
-          // Rute untuk Halaman Tambah (Top-Up)
-          GoRoute(
-            path: '/add',
-            builder: (context, state) => const TopUpScreen(),
-          ),
-          // Rute untuk Halaman Profil
-          GoRoute(
-            path: '/profile',
-            builder: (context, state) => const ProfileScreen(),
-          ),
-          // Rute untuk Halaman Loyalty
-          GoRoute(
-            path: '/loyalty',
-            builder: (context, state) => const LoyaltyScreen(),
-          ),
+          GoRoute(path: '/cart', builder: (context, state) => const CartScreen()),
+          GoRoute(path: '/add', builder: (context, state) => const TopUpScreen()),
+          GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
+          GoRoute(path: '/loyalty', builder: (context, state) => const LoyaltyScreen()),
         ],
       ),
     ],

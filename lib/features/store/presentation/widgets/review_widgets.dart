@@ -39,8 +39,9 @@ class ReviewCard extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade200)
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,58 +69,6 @@ class ReviewCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(review.comment),
-        ],
-      ),
-    );
-  }
-}
-
-// Widget untuk menampilkan seluruh bagian ulasan di halaman produk
-class ReviewSection extends StatelessWidget {
-  final String productId;
-  const ReviewSection({super.key, required this.productId});
-
-  @override
-  Widget build(BuildContext context) {
-    final reviews = ReviewService().getReviewsForProduct(productId);
-
-    if (reviews.isEmpty) {
-      return const Center(child: Text('Belum ada ulasan untuk produk ini.'));
-    }
-
-    // Hitung rata-rata rating
-    final double averageRating = reviews.map((r) => r.rating).reduce((a, b) => a + b) / reviews.length;
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Ulasan Produk (${reviews.length})',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              RatingStars(rating: averageRating, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                '${averageRating.toStringAsFixed(1)} dari 5.0',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-            ],
-          ),
-          const Divider(height: 32),
-          // Daftar semua ulasan
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(), // Agar tidak bisa di-scroll di dalam scroll
-            itemCount: reviews.length,
-            itemBuilder: (context, index) {
-              return ReviewCard(review: reviews[index]);
-            },
-          ),
         ],
       ),
     );

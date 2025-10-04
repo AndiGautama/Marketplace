@@ -1,12 +1,10 @@
 import '../../data/models/review_model.dart';
 
 class ReviewService {
-  // Data ulasan dummy dengan ID produk yang sudah disesuaikan
-  static final List<Review> _dummyReviews = [
-    // --- Ulasan untuk TOKO SEPATU (Produk ID: 'p1') ---
+  static List<Review> _dummyReviews = [
     Review(
       id: 'r1',
-      productId: 'p1', // Sesuai dengan 'Sepatu Lari Cepat'
+      productId: 'p1',
       username: 'Andi Gautama',
       avatarInitial: 'A',
       rating: 5.0,
@@ -15,29 +13,25 @@ class ReviewService {
     ),
     Review(
       id: 'r2',
-      productId: 'p1', // Sesuai dengan 'Sepatu Lari Cepat'
+      productId: 'p1',
       username: 'Kanye West',
       avatarInitial: 'K',
       rating: 4.0,
       comment: 'Kualitasnya bagus, tapi ukurannya sedikit lebih kecil dari biasanya. Saranku, naikin satu ukuran.',
       date: DateTime(2025, 9, 28),
     ),
-
-    // --- Ulasan untuk TOKO FASHION (Produk ID: 'p10') ---
     Review(
       id: 'r3',
-      productId: 'p10', // Sesuai dengan 'Kemeja Lengan Panjang'
+      productId: 'p10',
       username: 'Cindy Lung Lung',
       avatarInitial: 'C',
       rating: 4.5,
       comment: 'Bahannya enak, suka banget sama modelnya. Pas di badan!',
       date: DateTime(2025, 10, 1),
     ),
-    
-    // --- Ulasan untuk TOKO GADGET (Produk ID: 'p8' & 'p19') ---
      Review(
       id: 'r5',
-      productId: 'p8', // Sesuai dengan 'Smartphone Terbaru'
+      productId: 'p8',
       username: 'Eko Johaneshuu',
       avatarInitial: 'E',
       rating: 5.0,
@@ -46,29 +40,25 @@ class ReviewService {
     ),
     Review(
       id: 'r7',
-      productId: 'p19', // Ulasan untuk produk baru 'Wireless Earbuds Pro'
+      productId: 'p19',
       username: 'Gita diva',
       avatarInitial: 'G',
       rating: 5.0,
       comment: 'Suaranya sejernih air mineral, bass-nya mantap. Noise cancelling-nya juga berfungsi baik.',
       date: DateTime(2025, 10, 4),
     ),
-
-    // --- Ulasan untuk TOKO MAKANAN (Produk ID: 'p4') ---
      Review(
       id: 'r6',
-      productId: 'p4', // Sesuai dengan 'Burger Spesial Keju'
+      productId: 'p4',
       username: 'Farhan Kuliner',
       avatarInitial: 'F',
       rating: 5.0,
       comment: 'Burgernya juara! Isiannya tebel, rasanya pas, ga terlalu pedas. Pasti pesen lagi!',
       date: DateTime(2025, 10, 1),
     ),
-
-    // --- Ulasan untuk TOKO BUKU (Andi Media - Produk ID: 'p11') ---
     Review(
       id: 'r8',
-      productId: 'p11', // Sesuai dengan 'Novel Fiksi Ilmiah'
+      productId: 'p11',
       username: 'Harry Pustaka',
       avatarInitial: 'H',
       rating: 5.0,
@@ -77,7 +67,7 @@ class ReviewService {
     ),
     Review(
       id: 'r9',
-      productId: 'p11', // Sesuai dengan 'Novel Fiksi Ilmiah'
+      productId: 'p11',
       username: 'Irma Pembaca',
       avatarInitial: 'I',
       rating: 4.0,
@@ -86,9 +76,11 @@ class ReviewService {
     ),
   ];
 
-  // Fungsi ini tetap sama, mengambil ulasan berdasarkan ID produk
-  List<Review> getReviewsForProduct(String productId) {
+  static void addReview(Review newReview) {
+    _dummyReviews.insert(0, newReview);
+  }
+
+  static List<Review> getReviewsForProduct(String productId) {
     return _dummyReviews.where((review) => review.productId == productId).toList();
   }
 }
-
