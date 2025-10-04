@@ -4,6 +4,19 @@ import 'package:go_router/go_router.dart';
 import 'package:marketplace2/features/auth/logic/auth_bloc.dart';
 import 'package:marketplace2/features/cart/logic/cart_bloc.dart';
 
+// Model untuk merepresentasikan data sebuah banner iklan
+class AdBannerModel {
+  final String title;
+  final String imageUrl;
+  final String navigationPath;
+
+  AdBannerModel({
+    required this.title,
+    required this.imageUrl,
+    required this.navigationPath,
+  });
+}
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -15,12 +28,47 @@ class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
+  // --- IKLAN DITAMBAHKAN MENJADI 6 SLIDE DI SINI ---
+  final List<AdBannerModel> _adBanners = [
+    AdBannerModel(
+      title: 'Aneka Makanan Lezat!',
+      imageUrl: 'assets/images/banner_makanan.jpg',
+      navigationPath: '/categories/Toko Makanan',
+    ),
+    AdBannerModel(
+      title: 'Gadget Terbaru 2025',
+      imageUrl: 'assets/images/banner_gadget.jpg',
+      navigationPath: '/categories/Toko Gadget',
+    ),
+    AdBannerModel(
+      title: 'Fashion Pria & Wanita',
+      imageUrl: 'assets/images/banner_fashion.jpg',
+      navigationPath: '/categories/Toko Fashion',
+    ),
+     AdBannerModel(
+      title: 'Koleksi Sepatu Keren',
+      imageUrl: 'assets/images/banner_sepatu.jpg',
+      navigationPath: '/categories/Toko Sepatu',
+    ),
+    AdBannerModel(
+      title: 'Nonton Film Terbaru',
+      imageUrl: 'assets/images/banner_film.jpg',
+      navigationPath: '/categories/Toko Film',
+    ),
+    AdBannerModel(
+      title: 'Buku & Media Terlengkap',
+      imageUrl: 'assets/images/banner_buku.jpg',
+      navigationPath: '/categories/Toko Buku',
+    ),
+  ];
+
   final List<Map<String, dynamic>> _popularCategories = [
-    {'name': 'Sepatu', 'icon': Icons.shopify_outlined},
-    {'name': 'Makanan', 'icon': Icons.fastfood_outlined},
-    {'name': 'Gadget', 'icon': Icons.phone_android},
-    {'name': 'Fashion', 'icon': Icons.checkroom_outlined},
-    {'name': 'Buku', 'icon': Icons.menu_book},
+    {'displayName': 'Sepatu', 'categoryName': 'Toko Sepatu', 'icon': Icons.shopify_outlined},
+    {'displayName': 'Film', 'categoryName': 'Toko Film', 'icon': Icons.theaters},
+    {'displayName': 'Makanan', 'categoryName': 'Toko Makanan', 'icon': Icons.fastfood_outlined},
+    {'displayName': 'Gadget', 'categoryName': 'Toko Gadget', 'icon': Icons.phone_android},
+    {'displayName': 'Fashion', 'categoryName': 'Toko Fashion', 'icon': Icons.checkroom_outlined},
+    {'displayName': 'Buku', 'categoryName': 'Toko Buku', 'icon': Icons.menu_book},
   ];
 
   @override
@@ -121,19 +169,19 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 SizedBox(
                   height: 150,
-                  child: PageView(
+                  child: PageView.builder(
                     controller: _pageController,
-                    children: [
-                      _buildAdBanner(context, 'Diskon Spesial Minggu Ini!', Colors.deepOrangeAccent),
-                      _buildAdBanner(context, 'Produk Baru Lebih Hemat!', Colors.blueAccent),
-                      _buildAdBanner(context, 'Gratis Ongkir Seluruh Indonesia!', Colors.green),
-                    ],
+                    itemCount: _adBanners.length,
+                    itemBuilder: (context, index) {
+                      final banner = _adBanners[index];
+                      return _buildAdBanner(context, banner);
+                    },
                   ),
                 ),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(3, (index) => _buildDotIndicator(index)),
+                  children: List.generate(_adBanners.length, (index) => _buildDotIndicator(index)),
                 ),
               ],
             ),
@@ -181,9 +229,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   final category = _popularCategories[index];
                   return _buildCategoryChip(
                     context,
-                    name: category['name'],
+                    name: category['displayName'],
                     icon: category['icon'],
-                    onTap: () => _handleProtectedAction(context, () => context.push('/categories/${category['name']}')),
+                    onTap: () => _handleProtectedAction(context, () => context.push('/categories/${category['categoryName']}')),
                   );
                 },
               ),
@@ -208,35 +256,36 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildAdBanner(BuildContext context, String text, Color color) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [color.withOpacity(0.7), color],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(15.0),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.3),
-            spreadRadius: 2,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+  Widget _buildAdBanner(BuildContext context, AdBannerModel banner) {
+    return GestureDetector(
+      onTap: () {
+        _handleProtectedAction(context, () {
+          context.push(banner.navigationPath);
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.0),
+          image: DecorationImage(
+            image: AssetImage(banner.imageUrl),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.3),
+              BlendMode.darken,
+            ),
           ),
-        ],
-      ),
-      child: Center(
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            shadows: [Shadow(blurRadius: 2, color: Colors.black26)],
+        ),
+        child: Center(
+          child: Text(
+            banner.title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
+            ),
           ),
         ),
       ),

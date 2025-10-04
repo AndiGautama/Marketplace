@@ -9,7 +9,7 @@ class MockStoreRepository {
     // Toko Makanan
     StoreModel(id: 'store3', name: 'Restoran Reva', category: 'Toko Makanan', bannerUrl: 'assets/images/banner_makanan.jpg'),
     // Toko Film
-    StoreModel(id: 'store4', name: 'Bioskop George', category: 'Toko Film', bannerUrl: 'assets/images/banner_film.jpg'),
+    StoreModel(id: 'store4', name: 'George Cinema', category: 'Toko Film', bannerUrl: 'assets/images/banner_film.jpg'),
     // Toko Gadget
     StoreModel(id: 'store5', name: 'Andi GadgetIn', category: 'Toko Gadget', bannerUrl: 'assets/images/banner_gadget.jpg'),
     // Toko Fashion
