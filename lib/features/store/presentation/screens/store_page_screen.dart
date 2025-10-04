@@ -8,6 +8,7 @@ import 'package:marketplace2/features/store/data/repositories/mock_store_reposit
 import '../widgets/review_widgets.dart';
 import '../../domain/services/review_service.dart';
 import '../../data/models/review_model.dart';
+import 'package:marketplace2/features/home/domain/services/user_stats_service.dart';
 
 class StorePageScreen extends StatefulWidget {
   final String storeId;
@@ -22,7 +23,7 @@ class _StorePageScreenState extends State<StorePageScreen> {
   late Future<StoreModel> _storeFuture;
   late Future<List<ProductModel>> _productsFuture;
 
-  // --- STATE BARU UNTUK FORM ULASAN ---
+  // --- State untuk Form Ulasan ---
   double _newRating = 0.0;
   final TextEditingController _commentController = TextEditingController();
 
@@ -35,13 +36,12 @@ class _StorePageScreenState extends State<StorePageScreen> {
 
   @override
   void dispose() {
-    _commentController.dispose(); // Membersihkan controller
+    _commentController.dispose();
     super.dispose();
   }
 
-  // --- FUNGSI BARU UNTUK MENGIRIM ULASAN ---
+  // --- Fungsi untuk Mengirim Ulasan ---
   void _submitReview(String productId) {
-    // Validasi
     if (_newRating == 0.0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Harap berikan rating bintang.'), backgroundColor: Colors.red),
@@ -49,7 +49,6 @@ class _StorePageScreenState extends State<StorePageScreen> {
       return;
     }
 
-    // Buat objek ulasan baru
     final newReview = Review(
       id: DateTime.now().toString(),
       productId: productId,
@@ -60,12 +59,13 @@ class _StorePageScreenState extends State<StorePageScreen> {
       date: DateTime.now(),
     );
 
-    // Tambahkan ulasan & refresh UI
     ReviewService.addReview(newReview);
+    UserStatsService.instance.incrementReviewCount();
+
     setState(() {
       _commentController.clear();
       _newRating = 0.0;
-      FocusScope.of(context).unfocus(); // Menutup keyboard
+      FocusScope.of(context).unfocus();
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -82,20 +82,18 @@ class _StorePageScreenState extends State<StorePageScreen> {
           _buildSectionTitle("Produk Kami"),
           _buildProductGrid(),
           _buildSectionTitle("Ulasan Produk"),
-          _buildReviewSection(), 
-          // --- MENAMPILKAN FORM ULASAN DI SINI ---
+          _buildReviewSection(),
           _buildAddReviewFormSliver(),
         ],
       ),
     );
   }
 
-  // --- WIDGET BARU UNTUK FORM ULASAN ---
+  // --- Widget untuk Form Ulasan ---
   Widget _buildAddReviewFormSliver() {
     return FutureBuilder<List<ProductModel>>(
       future: _productsFuture,
       builder: (context, snapshot) {
-        // Hanya tampilkan form jika produk sudah dimuat
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           final firstProductId = snapshot.data!.first.id;
 
@@ -144,13 +142,12 @@ class _StorePageScreenState extends State<StorePageScreen> {
             ),
           );
         }
-        // Jika tidak ada produk, jangan tampilkan form
         return const SliverToBoxAdapter(child: SizedBox.shrink());
       },
     );
   }
 
-  // --- FUNGSI _buildProductCard DIPERBARUI (Tombol Dihapus) ---
+  // --- Kartu Produk kembali ke versi simpel ---
   Widget _buildProductCard(BuildContext context, ProductModel product) {
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -181,7 +178,7 @@ class _StorePageScreenState extends State<StorePageScreen> {
               style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
             ),
           ),
-          const Spacer(), // Spacer digunakan untuk mendorong tombol ke bawah
+          const Spacer(),
           Padding(
             padding: const EdgeInsets.fromLTRB(8,0,8,8),
             child: ElevatedButton(

@@ -5,6 +5,9 @@ import 'package:marketplace2/core/utils/formatter.dart';
 import 'package:marketplace2/features/auth/logic/auth_bloc.dart';
 import 'package:marketplace2/features/wallet/logic/wallet_bloc.dart';
 
+// <-- 1. IMPORT WIDGET BARU ANDA
+import '../widgets/stats_card_widget.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -28,68 +31,70 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildLoggedInView(BuildContext context, AuthSuccess authState) {
-    // --- PERINTAH DEBUGGING ---
-    // Baris ini akan mencetak nama pengguna ke Debug Console saat halaman ini dibuat.
-    debugPrint("--- Membangun Halaman Profil untuk pengguna: '${authState.user.fullName}' ---");
-    // -------------------------
-
-    return Padding(
+    // --- PERUBAHAN: Menggunakan ListView untuk layout yang lebih fleksibel ---
+    return ListView(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          CircleAvatar(
-            radius: 50,
-            backgroundColor: Theme.of(context).primaryColor.withOpacity(0.2),
-            child: Text(
-              authState.user.fullName.isNotEmpty ? authState.user.fullName[0].toUpperCase() : '?',
-              style: TextStyle(
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).primaryColor,
-              ),
+      children: [
+        CircleAvatar(
+          radius: 50,
+          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.2),
+          child: Text(
+            authState.user.fullName.isNotEmpty ? authState.user.fullName[0].toUpperCase() : '?',
+            style: TextStyle(
+              fontSize: 48,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).primaryColor,
             ),
           ),
-          const SizedBox(height: 16),
-          Text(
-            authState.user.fullName,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          authState.user.fullName,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          authState.user.email,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+        ),
+        const SizedBox(height: 32),
+        const Divider(),
+        const SizedBox(height: 16),
+        BlocBuilder<WalletBloc, WalletState>(
+          builder: (context, walletState) {
+            if (walletState is WalletLoaded) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildWalletInfo('Saldo', AppFormatter.formatRupiah(walletState.balance)),
+                  _buildWalletInfo('Poin', '${walletState.points} Poin'),
+                ],
+              );
+            }
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
+        const SizedBox(height: 16),
+        
+        // <-- 2. TAMBAHKAN WIDGET KARTU STATISTIK DI SINI
+        const StatsCardWidget(),
+
+        const Divider(),
+        const SizedBox(height: 16),
+
+        // Tombol Logout
+        ElevatedButton(
+          onPressed: () {
+            context.read<AuthBloc>().add(LogoutButtonPressed());
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.redAccent,
+            padding: const EdgeInsets.symmetric(vertical: 12),
           ),
-          Text(
-            authState.user.email,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-          ),
-          const SizedBox(height: 32),
-          const Divider(),
-          const SizedBox(height: 16),
-          BlocBuilder<WalletBloc, WalletState>(
-            builder: (context, walletState) {
-              if (walletState is WalletLoaded) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildWalletInfo('Saldo', AppFormatter.formatRupiah(walletState.balance)),
-                    _buildWalletInfo('Poin', '${walletState.points} Poin'),
-                  ],
-                );
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
-          ),
-          const SizedBox(height: 16),
-          const Divider(),
-          const Spacer(),
-          ElevatedButton(
-            onPressed: () {
-              context.read<AuthBloc>().add(LogoutButtonPressed());
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Logout'),
-          ),
-        ],
-      ),
+          child: const Text('Logout', style: TextStyle(color: Colors.white, fontSize: 16)),
+        ),
+      ],
     );
   }
 
