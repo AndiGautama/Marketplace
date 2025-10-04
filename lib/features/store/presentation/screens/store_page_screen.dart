@@ -10,6 +10,9 @@ import '../../domain/services/review_service.dart';
 import '../../data/models/review_model.dart';
 import 'package:marketplace2/features/home/domain/services/user_stats_service.dart';
 
+// <-- 1. IMPORT AUTH BLOC UNTUK MENGAKSES DATA PENGGUNA
+import 'package:marketplace2/features/auth/logic/auth_bloc.dart';
+
 class StorePageScreen extends StatefulWidget {
   final String storeId;
   const StorePageScreen({super.key, required this.storeId});
@@ -23,7 +26,6 @@ class _StorePageScreenState extends State<StorePageScreen> {
   late Future<StoreModel> _storeFuture;
   late Future<List<ProductModel>> _productsFuture;
 
-  // --- State untuk Form Ulasan ---
   double _newRating = 0.0;
   final TextEditingController _commentController = TextEditingController();
 
@@ -40,7 +42,6 @@ class _StorePageScreenState extends State<StorePageScreen> {
     super.dispose();
   }
 
-  // --- Fungsi untuk Mengirim Ulasan ---
   void _submitReview(String productId) {
     if (_newRating == 0.0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -48,12 +49,27 @@ class _StorePageScreenState extends State<StorePageScreen> {
       );
       return;
     }
+    
+    // --- 2. AMBIL STATE DARI AUTH BLOC ---
+    final authState = context.read<AuthBloc>().state;
+    String username = 'Pengguna'; // Nama default
+    String avatarInitial = 'P'; // Inisial default
+
+    // Pastikan pengguna sudah login
+    if (authState is AuthSuccess) {
+      username = authState.user.fullName;
+      if (username.isNotEmpty) {
+        avatarInitial = username[0].toUpperCase();
+      }
+    }
+    // --- AKHIR PENGAMBILAN STATE ---
 
     final newReview = Review(
       id: DateTime.now().toString(),
       productId: productId,
-      username: 'Jovian (Anda)',
-      avatarInitial: 'J',
+      // --- 3. GUNAKAN NAMA DAN INISIAL YANG SUDAH DIAMBIL ---
+      username: username,
+      avatarInitial: avatarInitial,
       rating: _newRating,
       comment: _commentController.text,
       date: DateTime.now(),
@@ -75,6 +91,7 @@ class _StorePageScreenState extends State<StorePageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ... sisa kode tidak berubah
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -89,7 +106,8 @@ class _StorePageScreenState extends State<StorePageScreen> {
     );
   }
 
-  // --- Widget untuk Form Ulasan ---
+  // --- Sisa file di bawah ini tidak ada perubahan ---
+
   Widget _buildAddReviewFormSliver() {
     return FutureBuilder<List<ProductModel>>(
       future: _productsFuture,
@@ -147,7 +165,6 @@ class _StorePageScreenState extends State<StorePageScreen> {
     );
   }
 
-  // --- Kartu Produk kembali ke versi simpel ---
   Widget _buildProductCard(BuildContext context, ProductModel product) {
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -196,7 +213,6 @@ class _StorePageScreenState extends State<StorePageScreen> {
     );
   }
   
-  // -- Sisanya tidak berubah --
   SliverAppBar _buildAppBar() {
     return SliverAppBar(
       automaticallyImplyLeading: true,
