@@ -10,12 +10,20 @@ class ForgotPasswordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final emailController = TextEditingController();
 
+    // 🎨 Definisi Warna Tema ABU-ABU GELAP (Lokal)
+    final Color darkBackground = Colors.grey.shade600; // Background gelap
+    final Color primaryDark = Colors.grey.shade900; // Warna utama (Teks & Ikon)
+    final Color inputFillColor = Colors.white; // Input field tetap putih
+    final Color buttonColor = Colors.grey.shade300; // Tombol abu-abu muda
+    final Color inputBorderColor = Colors.grey.shade400; // Warna border input
+    final Color secondaryText = Colors.black87; 
+
     return Scaffold(
-      backgroundColor: Colors.grey[600], // 🔹 Background abu-abu
+      backgroundColor: darkBackground, // Background ABU-ABU GELAP
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: Colors.black,
+        foregroundColor: primaryDark, // Ikon kembali Abu-abu gelap
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -44,40 +52,50 @@ class ForgotPasswordScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
+                Text(
                   'Forgot\nPassword?',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Serif',
-                    color: Colors.black, // 🔹 hitam
+                    color: primaryDark, // Teks utama Abu-abu gelap
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   "No worries, we'll send you reset instructions",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Colors.black87), // 🔹 abu tua
+                  style: TextStyle(fontSize: 16, color: secondaryText), // Teks sekunder
                 ),
                 const SizedBox(height: 48),
                 TextFormField(
                   controller: emailController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Email',
-                    prefixIcon: Icon(Icons.email),
+                    labelStyle: TextStyle(color: primaryDark.withOpacity(0.7)),
+                    prefixIcon: Icon(Icons.email, color: primaryDark), // Ikon Abu-abu gelap
                     filled: true,
-                    fillColor: Colors.white, // 🔹 kotak input putih
+                    fillColor: inputFillColor, // Kotak input putih
+                    // Styling border yang dirapikan
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(30)), // oval
-                      borderSide: BorderSide.none,
+                      borderRadius: const BorderRadius.all(Radius.circular(30)),
+                      borderSide: BorderSide(color: inputBorderColor),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(Radius.circular(30)),
+                      borderSide: BorderSide(color: inputBorderColor),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(Radius.circular(30)),
+                      borderSide: BorderSide(color: primaryDark, width: 2),
                     ),
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 32),
                 state is AuthLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? Center(child: CircularProgressIndicator(color: primaryDark)) // Loader Abu-abu gelap
                     : ElevatedButton(
                         onPressed: () {
                           context.read<AuthBloc>().add(
@@ -85,23 +103,24 @@ class ForgotPasswordScreen extends StatelessWidget {
                                   email: emailController.text));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey[300], // 🔹 tombol abu-abu muda
+                          backgroundColor: buttonColor, // Tombol abu-abu muda
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
+                          elevation: 0, // Menghilangkan elevasi
                         ),
-                        child: const Text(
+                        child: Text(
                           'Reset Password',
-                          style: TextStyle(color: Colors.black), // 🔹 teks hitam
+                          style: TextStyle(color: primaryDark), // Teks tombol Abu-abu gelap
                         ),
                       ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () => context.go('/login'),
-                  child: const Text(
+                  child: Text(
                     'Back to Login',
-                    style: TextStyle(color: Colors.black), // 🔹 teks hitam
+                    style: TextStyle(color: primaryDark), // Teks tombol Abu-abu gelap
                   ),
                 ),
               ],

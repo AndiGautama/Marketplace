@@ -161,6 +161,7 @@ class _StorePageScreenState extends State<StorePageScreen> {
     );
   }
 
+  // --- PERBAIKAN 2: childAspectRatio disesuaikan ---
   Widget _buildProductGrid() {
     return FutureBuilder<List<ProductModel>>(
       future: _productsFuture,
@@ -177,7 +178,12 @@ class _StorePageScreenState extends State<StorePageScreen> {
           padding: const EdgeInsets.all(16.0),
           sliver: SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, mainAxisSpacing: 16, crossAxisSpacing: 16, childAspectRatio: 0.65,
+              crossAxisCount: 2, 
+              mainAxisSpacing: 16, 
+              crossAxisSpacing: 16, 
+              // Nilai 0.58 akan memberikan lebih banyak ruang vertikal 
+              // dan mengatasi overflow 8.0 pixels yang tersisa.
+              childAspectRatio: 0.58, 
             ),
             delegate: SliverChildBuilderDelegate(
               (context, index) => _buildProductCard(context, products[index]),
@@ -188,68 +194,78 @@ class _StorePageScreenState extends State<StorePageScreen> {
       },
     );
   }
+  // --- END PERBAIKAN 2 ---
 
+  // --- PERBAIKAN 1: const Spacer() dihapus ---
   Widget _buildProductCard(BuildContext context, ProductModel product) {
     return Card(
       clipBehavior: Clip.antiAlias,
       elevation: 2,
       color: cardBackground, // Card putih
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Image.asset(
-            product.imageUrl,
-            height: 120,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                height: 120,
-                color: Colors.grey.shade200,
-                child: Center(child: Icon(Icons.broken_image_outlined, size: 40, color: Colors.grey.shade500)),
-              );
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              product.name, 
-              style: TextStyle(fontWeight: FontWeight.bold, color: primaryGrey), // Teks abu-abu gelap
-              maxLines: 2, 
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              AppFormatter.formatRupiah(product.price),
-              style: TextStyle(color: primaryGrey, fontWeight: FontWeight.bold), // Harga abu-abu gelap
-            ),
-          ),
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8,0,8,8),
-            child: ElevatedButton(
-              onPressed: () {
-                context.read<CartBloc>().add(AddProductToCart(product));
-                // Notifikasi sukses tetap hijau
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${product.name} ditambahkan!'), duration: const Duration(seconds: 1), backgroundColor: Colors.green),
+      child: InkWell(
+        onTap: () {
+          // Logika navigasi ke detail produk (jika ada)
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Image.asset(
+              product.imageUrl,
+              height: 120,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  height: 120,
+                  color: Colors.grey.shade200,
+                  child: Center(child: Icon(Icons.broken_image_outlined, size: 40, color: Colors.grey.shade500)),
                 );
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryGrey, // Tombol abu-abu gelap
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              child: const Text('+ Keranjang'),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                product.name, 
+                style: TextStyle(fontWeight: FontWeight.bold, color: primaryGrey), // Teks abu-abu gelap
+                maxLines: 2, 
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                AppFormatter.formatRupiah(product.price),
+                style: TextStyle(color: primaryGrey, fontWeight: FontWeight.bold), // Harga abu-abu gelap
+              ),
+            ),
+            
+            // PERBAIKAN: Spacer dihapus dan diganti dengan SizedBox.
+            const SizedBox(height: 8), 
+            
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+              child: ElevatedButton(
+                onPressed: () {
+                  context.read<CartBloc>().add(AddProductToCart(product));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('${product.name} ditambahkan!'), duration: const Duration(seconds: 1), backgroundColor: Colors.green),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryGrey, // Tombol abu-abu gelap
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                child: const Text('+ Keranjang'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+  // --- END PERBAIKAN 1 ---
 
   Widget _buildReviewSection() {
     return FutureBuilder<List<ProductModel>>(
@@ -272,7 +288,6 @@ class _StorePageScreenState extends State<StorePageScreen> {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                // Catatan: ReviewCard harus mengadopsi tema abu-abu secara internal
                 (context, index) => ReviewCard(review: reviews[index]), 
                 childCount: reviews.length,
               ),

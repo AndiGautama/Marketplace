@@ -12,18 +12,20 @@ class RegisterScreen extends StatelessWidget {
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
 
-    // Warna yang lebih konsisten dengan tema abu-abu Anda
-    const Color backgroundColor = Color(0xFF9E9E9E); // Colors.grey[600]
-    const Color primaryTextColor = Colors.black;
-    const Color inputFillColor = Colors.white;
-    final Color buttonColor = Colors.grey.shade300;
+    // 🎨 Definisi Warna Tema ABU-ABU GELAP (Lokal)
+    final Color darkBackground = Colors.grey.shade600; // Background gelap
+    final Color primaryDark = Colors.grey.shade900; // Warna utama (Teks & Ikon)
+    final Color inputFillColor = Colors.white; // Input field tetap putih
+    final Color buttonColor = Colors.grey.shade300; // Tombol abu-abu muda
+    final Color inputBorderColor = Colors.grey.shade400; // Warna border input
+    final Color secondaryText = Colors.black87; 
 
     return Scaffold(
-      backgroundColor: backgroundColor, // Background abu-abu
+      backgroundColor: darkBackground, // Background ABU-ABU GELAP
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: primaryTextColor, // Ikon Back hitam
+        foregroundColor: primaryDark, // Ikon Back Abu-abu Gelap
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -40,75 +42,108 @@ class RegisterScreen extends StatelessWidget {
           return SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              // Hapus widget Center di sini
               child: SingleChildScrollView(
-                // Tambahkan physics agar dapat di-scroll meski kontennya pendek
                 physics: const ClampingScrollPhysics(),
                 child: Column(
-                  // ❗ PERBAIKAN UTAMA: Ubah ke MainAxisAlignment.start
-                  // Ini akan menjaga konten tetap di atas saat keyboard muncul
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Tambahkan spasi di atas untuk penataan yang lebih rapi
                     const SizedBox(height: 24),
-                    const Text(
+                    Text(
                       "Let's Create\nYour Account",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Serif',
-                        color: primaryTextColor,
+                        color: primaryDark, // Teks utama Abu-abu Gelap
                       ),
                     ),
                     const SizedBox(height: 48),
+                    
+                    // --- INPUT FULL NAME ---
                     TextFormField(
                       controller: fullNameController,
                       decoration: InputDecoration(
                         labelText: 'Full Name',
-                        prefixIcon: const Icon(Icons.person),
+                        labelStyle: TextStyle(color: primaryDark.withOpacity(0.7)),
+                        prefixIcon: Icon(Icons.person, color: primaryDark), // Ikon Abu-abu Gelap
                         filled: true,
                         fillColor: inputFillColor,
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
-                          borderSide: BorderSide.none,
+                        // Styling border rapi
+                        border: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(Radius.circular(30)),
+                          borderSide: BorderSide(color: inputBorderColor),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(Radius.circular(30)),
+                          borderSide: BorderSide(color: inputBorderColor),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(Radius.circular(30)),
+                          borderSide: BorderSide(color: primaryDark, width: 2),
                         ),
                       ),
                     ),
                     const SizedBox(height: 16),
+                    
+                    // --- INPUT EMAIL ---
                     TextFormField(
                       controller: emailController,
                       decoration: InputDecoration(
                         labelText: 'Email Address',
-                        prefixIcon: const Icon(Icons.email),
+                        labelStyle: TextStyle(color: primaryDark.withOpacity(0.7)),
+                        prefixIcon: Icon(Icons.email, color: primaryDark), // Ikon Abu-abu Gelap
                         filled: true,
                         fillColor: inputFillColor,
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
-                          borderSide: BorderSide.none,
+                        // Styling border rapi
+                        border: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(Radius.circular(30)),
+                          borderSide: BorderSide(color: inputBorderColor),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(Radius.circular(30)),
+                          borderSide: BorderSide(color: inputBorderColor),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(Radius.circular(30)),
+                          borderSide: BorderSide(color: primaryDark, width: 2),
                         ),
                       ),
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
+                    
+                    // --- INPUT PASSWORD ---
                     TextFormField(
                       controller: passwordController,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock),
+                        labelStyle: TextStyle(color: primaryDark.withOpacity(0.7)),
+                        prefixIcon: Icon(Icons.lock, color: primaryDark), // Ikon Abu-abu Gelap
                         filled: true,
                         fillColor: inputFillColor,
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
-                          borderSide: BorderSide.none,
+                        // Styling border rapi
+                        border: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(Radius.circular(30)),
+                          borderSide: BorderSide(color: inputBorderColor),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(Radius.circular(30)),
+                          borderSide: BorderSide(color: inputBorderColor),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(Radius.circular(30)),
+                          borderSide: BorderSide(color: primaryDark, width: 2),
                         ),
                       ),
                       obscureText: true,
                     ),
                     const SizedBox(height: 24),
+                    
+                    // --- TOMBOL SIGN UP ---
                     state is AuthLoading
-                        ? const Center(child: CircularProgressIndicator())
+                        ? Center(child: CircularProgressIndicator(color: primaryDark))
                         : ElevatedButton(
                             onPressed: () {
                               final fullName = fullNameController.text.trim();
@@ -136,28 +171,31 @@ class RegisterScreen extends StatelessWidget {
                                   );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: buttonColor, // abu muda
+                              backgroundColor: buttonColor, // Tombol abu-abu muda
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
+                              elevation: 0,
                             ),
-                            child: const Text(
+                            child: Text(
                               'Sign Up',
-                              style: TextStyle(color: primaryTextColor), // hitam
+                              style: TextStyle(color: primaryDark), // Teks tombol Abu-abu Gelap
                             ),
                           ),
                     const SizedBox(height: 16),
+                    
+                    // --- LINK KE LOGIN ---
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Have an account?",
-                            style: TextStyle(color: primaryTextColor)),
+                        Text("Have an account?",
+                            style: TextStyle(color: secondaryText)),
                         TextButton(
                           onPressed: () => context.go('/login'),
-                          child: const Text(
+                          child: Text(
                             'Sign In',
-                            style: TextStyle(color: primaryTextColor), // hitam
+                            style: TextStyle(color: primaryDark), // Teks tombol Abu-abu Gelap
                           ),
                         ),
                       ],

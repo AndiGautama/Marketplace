@@ -15,11 +15,13 @@ class _StoreListScreenState extends State<StoreListScreen> {
   late Future<List<StoreModel>> _storesFuture;
   final MockStoreRepository storeRepository = MockStoreRepository();
 
-  // 🎨 Warna Tema Abu-abu
-  final Color primaryGrey = Colors.grey.shade800;
-  final Color backgroundGrey = Colors.grey.shade100;
-  final Color appBarBackground = Colors.grey.shade200;
+  // 🎨 Warna Tema ABU-ABU GELAP (Lokal)
+  final Color darkPrimary = Colors.grey.shade900; // Warna Aksi/Primer Abu-abu gelap
+  final Color lightBackground = Colors.grey.shade100; // Background ABU-ABU MUDA
+  final Color appBarBackground = Colors.grey.shade50; // Background AppBar ABU-ABU SANGAT TERANG
   final Color cardBackground = Colors.white;
+  final Color cardBorderGrey = Colors.grey.shade400; // Border Abu-abu gelap halus
+  final Color secondaryText = Colors.grey.shade600;
 
   @override
   void initState() {
@@ -30,17 +32,17 @@ class _StoreListScreenState extends State<StoreListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundGrey,
+      backgroundColor: lightBackground, // Background ABU-ABU MUDA
       appBar: AppBar(
         title: Text(
           widget.categoryName,
           style: TextStyle(
-            color: primaryGrey,
+            color: darkPrimary, // Teks judul Abu-abu gelap
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: appBarBackground,
-        foregroundColor: primaryGrey,
+        backgroundColor: appBarBackground, // Background AppBar ABU-ABU SANGAT TERANG
+        foregroundColor: darkPrimary, // Ikon kembali Abu-abu gelap
         elevation: 0,
         surfaceTintColor: appBarBackground,
       ),
@@ -49,14 +51,14 @@ class _StoreListScreenState extends State<StoreListScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(color: primaryGrey),
+              child: CircularProgressIndicator(color: darkPrimary), // Loading Abu-abu gelap
             );
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(
               child: Text(
                 'Tidak ada toko dalam kategori ini.',
-                style: TextStyle(color: Colors.grey.shade600),
+                style: TextStyle(color: secondaryText),
               ),
             );
           }
@@ -78,12 +80,13 @@ class _StoreListScreenState extends State<StoreListScreen> {
     return Card(
       clipBehavior: Clip.antiAlias,
       margin: const EdgeInsets.only(bottom: 16.0),
-      color: cardBackground,
+      color: cardBackground, // Card putih
       elevation: 3,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
+        // Border Abu-abu gelap halus
         side: BorderSide(
-          color: Colors.grey.shade300,
+          color: cardBorderGrey, 
           width: 1,
         ),
       ),
@@ -100,11 +103,11 @@ class _StoreListScreenState extends State<StoreListScreen> {
               errorBuilder: (context, error, stackTrace) {
                 return Container(
                   height: 120,
-                  color: Colors.grey.shade300,
-                  child: const Center(
+                  color: Colors.grey.shade200, // Placeholder Abu-abu Muda
+                  child: Center(
                     child: Icon(
                       Icons.broken_image_outlined,
-                      color: Colors.grey,
+                      color: darkPrimary, // Ikon Abu-abu gelap
                       size: 40,
                     ),
                   ),
@@ -118,7 +121,7 @@ class _StoreListScreenState extends State<StoreListScreen> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: primaryGrey,
+                  color: darkPrimary, // Teks Abu-abu gelap
                 ),
               ),
             ),
