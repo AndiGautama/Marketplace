@@ -17,7 +17,6 @@ class CartItem extends Equatable {
   @override
   List<Object> get props => [product, quantity];
 
-  // Fungsi untuk mengubah CartItem menjadi Map JSON
   Map<String, dynamic> toJson() {
     return {
       'product': product.toJson(),
@@ -25,7 +24,6 @@ class CartItem extends Equatable {
     };
   }
 
-  // Fungsi untuk membuat CartItem dari Map JSON
   factory CartItem.fromJson(Map<String, dynamic> json) {
     return CartItem(
       product: ProductModel.fromJson(json['product']),

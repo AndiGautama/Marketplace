@@ -16,7 +16,6 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
   double _rating = 0.0;
   final TextEditingController _commentController = TextEditingController();
 
-  // 🎨 Warna tema abu-abu
   final Color primaryGrey = Colors.grey.shade800;
   final Color backgroundGrey = Colors.grey.shade100;
   final Color appBarBackground = Colors.grey.shade200;
@@ -27,7 +26,7 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Harap berikan rating bintang terlebih dahulu.'),
-          backgroundColor: primaryGrey, // ✅ snackbar abu-abu gelap
+          backgroundColor: primaryGrey,
         ),
       );
       return;
@@ -36,17 +35,16 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
     final newReview = Review(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       productId: widget.product.id,
-      username: 'Jovian (Anda)', // contoh nama pengguna statis
+      username: 'Jovian (Anda)',
       avatarInitial: 'J',
       rating: _rating,
       comment: _commentController.text,
       date: DateTime.now(),
     );
 
-    // Tambahkan ulasan baru
     ReviewService.addReview(newReview);
 
-    Navigator.of(context).pop(true); // kembali & kirim sinyal berhasil
+    Navigator.of(context).pop(true);
   }
 
   @override
@@ -72,7 +70,6 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          // Card nama produk
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -90,7 +87,6 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
           ),
           const SizedBox(height: 20),
 
-          // Label rating
           Text(
             'Berikan Rating Anda:',
             style: TextStyle(
@@ -98,7 +94,6 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
           ),
           const SizedBox(height: 12),
 
-          // Bintang rating
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(5, (index) {
@@ -110,7 +105,7 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                 },
                 icon: Icon(
                   index < _rating ? Icons.star : Icons.star_border,
-                  color: Colors.amber, // ⭐ bintang tetap emas
+                  color: Colors.amber,
                   size: 40,
                 ),
               );
@@ -118,7 +113,6 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
           ),
           const SizedBox(height: 30),
 
-          // Input komentar
           TextField(
             controller: _commentController,
             maxLines: 5,
@@ -145,7 +139,6 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
           ),
           const SizedBox(height: 30),
 
-          // Tombol kirim ulasan
           ElevatedButton(
             onPressed: _submitReview,
             style: ElevatedButton.styleFrom(

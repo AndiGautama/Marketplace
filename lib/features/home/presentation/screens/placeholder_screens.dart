@@ -9,8 +9,7 @@ class PlaceholderScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
-        // Menambahkan tombol kembali secara otomatis jika masuk dari halaman lain
-        automaticallyImplyLeading: true, 
+        automaticallyImplyLeading: true,
       ),
       body: Center(
         child: Text(

@@ -11,19 +11,18 @@ class LoginScreen extends StatelessWidget {
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
 
-    // 🎨 Definisi Warna Tema ABU-ABU GELAP (Lokal)
-    final Color darkBackground = Colors.grey.shade600; // Background gelap
-    final Color primaryDark = Colors.grey.shade900; // Warna utama (Teks & Ikon)
-    final Color inputFillColor = Colors.white; // Input field tetap putih
-    final Color buttonColor = Colors.grey.shade300; // Tombol abu-abu muda
-    final Color inputBorderColor = Colors.grey.shade400; // Warna border input
+    final Color darkBackground = Colors.grey.shade600;
+    final Color primaryDark = Colors.grey.shade900;
+    final Color inputFillColor = Colors.white;
+    final Color buttonColor = Colors.grey.shade300;
+    final Color inputBorderColor = Colors.grey.shade400;
 
     return Scaffold(
-      backgroundColor: darkBackground, // Background ABU-ABU GELAP
+      backgroundColor: darkBackground,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            context.go('/'); // Navigasi ke Home jika sukses
+            context.go('/');
           }
           if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -40,11 +39,8 @@ class LoginScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Ikon Toko
-                    Icon(Icons.store,
-                        size: 80, color: primaryDark), // Ikon Abu-abu Gelap
+                    Icon(Icons.store, size: 80, color: primaryDark),
                     const SizedBox(height: 16),
-                    // Judul Aplikasi
                     Text(
                       'Marketplace',
                       textAlign: TextAlign.center,
@@ -52,11 +48,10 @@ class LoginScreen extends StatelessWidget {
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Serif',
-                        color: primaryDark, // Teks Abu-abu Gelap
+                        color: primaryDark,
                       ),
                     ),
                     const SizedBox(height: 48),
-                    // Input Email
                     TextFormField(
                       controller: emailController,
                       decoration: InputDecoration(
@@ -65,7 +60,6 @@ class LoginScreen extends StatelessWidget {
                         prefixIcon: Icon(Icons.person, color: primaryDark),
                         filled: true,
                         fillColor: inputFillColor,
-                        // Styling border baru
                         border: OutlineInputBorder(
                           borderRadius: const BorderRadius.all(Radius.circular(30)),
                           borderSide: BorderSide(color: inputBorderColor),
@@ -82,7 +76,6 @@ class LoginScreen extends StatelessWidget {
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
-                    // Input Password
                     TextFormField(
                       controller: passwordController,
                       decoration: InputDecoration(
@@ -91,7 +84,6 @@ class LoginScreen extends StatelessWidget {
                         prefixIcon: Icon(Icons.lock, color: primaryDark),
                         filled: true,
                         fillColor: inputFillColor,
-                        // Styling border baru
                         border: OutlineInputBorder(
                           borderRadius: const BorderRadius.all(Radius.circular(30)),
                           borderSide: BorderSide(color: inputBorderColor),
@@ -108,19 +100,17 @@ class LoginScreen extends StatelessWidget {
                       obscureText: true,
                     ),
                     const SizedBox(height: 8),
-                    // Tombol Forgot Password
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () => context.go('/forgot-password'),
                         child: Text(
                           'Forgot Password?',
-                          style: TextStyle(color: primaryDark), // Teks Abu-abu Gelap
+                          style: TextStyle(color: primaryDark),
                         ),
                       ),
                     ),
                     const SizedBox(height: 24),
-                    // Tombol Login
                     state is AuthLoading
                         ? Center(child: CircularProgressIndicator(color: primaryDark))
                         : ElevatedButton(
@@ -131,29 +121,27 @@ class LoginScreen extends StatelessWidget {
                                   ));
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: buttonColor, // Tombol abu-abu muda
+                              backgroundColor: buttonColor,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
-                              elevation: 0, // Menghilangkan elevasi untuk tampilan clean
+                              elevation: 0,
                             ),
                             child: Text(
                               'Login',
-                              style: TextStyle(color: primaryDark), // Teks tombol Abu-abu Gelap
+                              style: TextStyle(color: primaryDark),
                             ),
                           ),
                     const SizedBox(height: 16),
-                    // Teks 'or'
                     Text('or',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: primaryDark)), // Teks Abu-abu Gelap
-                    // Tombol Create an account
+                        style: TextStyle(color: primaryDark)),
                     TextButton(
                       onPressed: () => context.go('/register'),
                       child: Text(
                         'Create an account',
-                        style: TextStyle(color: primaryDark), // Teks Abu-abu Gelap
+                        style: TextStyle(color: primaryDark),
                       ),
                     ),
                   ],

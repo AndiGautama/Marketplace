@@ -62,12 +62,9 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
       ),
-      // --- PERUBAHAN UTAMA DI SINI ---
       body: GestureDetector(
-        // Saat area kosong di-tap, kembali ke Halaman Home
         onTap: () => context.go('/'),
-        // Kita buat transparan agar sentuhan pada area yang ada widget-nya (ListTile) tidak tertangkap
-        behavior: HitTestBehavior.translucent, 
+        behavior: HitTestBehavior.translucent,
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _foundStores.isNotEmpty
@@ -83,7 +80,6 @@ class _SearchScreenState extends State<SearchScreen> {
                           title: Text(store.name, style: const TextStyle(fontWeight: FontWeight.bold)),
                           subtitle: Text(store.category),
                           onTap: () {
-                            // Aksi ini akan berjalan saat item di-tap, bukan GestureDetector di atasnya
                             context.push('/stores/${store.id}');
                           },
                         ),

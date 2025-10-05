@@ -27,7 +27,6 @@ class _StorePageScreenState extends State<StorePageScreen> {
   double _newRating = 0.0;
   final TextEditingController _commentController = TextEditingController();
 
-  // 🎨 Definisi Warna Tema Abu-abu
   final Color primaryGrey = Colors.grey.shade800;
   final Color backgroundGrey = Colors.grey.shade100;
   final Color cardBackground = Colors.white;
@@ -54,8 +53,8 @@ class _StorePageScreenState extends State<StorePageScreen> {
     }
 
     final authState = context.read<AuthBloc>().state;
-    String username = 'Pengguna'; // Nama default
-    String avatarInitial = 'P'; // Inisial default
+    String username = 'Pengguna';
+    String avatarInitial = 'P';
 
     if (authState is AuthSuccess) {
       username = authState.user.fullName;
@@ -91,7 +90,7 @@ class _StorePageScreenState extends State<StorePageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundGrey, // Background abu-abu muda
+      backgroundColor: backgroundGrey,
       body: CustomScrollView(
         slivers: [
           _buildAppBar(),
@@ -108,7 +107,7 @@ class _StorePageScreenState extends State<StorePageScreen> {
   SliverAppBar _buildAppBar() {
     return SliverAppBar(
       automaticallyImplyLeading: true,
-      backgroundColor: primaryGrey, // AppBar abu-abu gelap (untuk kontras)
+      backgroundColor: primaryGrey,
       expandedHeight: 200.0,
       floating: false,
       pinned: true,
@@ -129,15 +128,13 @@ class _StorePageScreenState extends State<StorePageScreen> {
               return Image.asset(
                 snapshot.data!.bannerUrl,
                 fit: BoxFit.cover,
-                // Tambahkan overlay gelap pada banner
                 color: Colors.black.withOpacity(0.3),
                 colorBlendMode: BlendMode.darken,
                 errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.error, color: Colors.white)),
               );
             }
             return Container(
-              // Gunakan abu-abu untuk background jika gambar gagal
-              color: primaryGrey.withOpacity(0.5), 
+              color: primaryGrey.withOpacity(0.5),
               child: const Center(child: CircularProgressIndicator(color: Colors.white)),
             );
           },
@@ -151,17 +148,16 @@ class _StorePageScreenState extends State<StorePageScreen> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
         child: Text(
-          title, 
+          title,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold, 
-            color: primaryGrey // Judul bagian abu-abu gelap
+              fontWeight: FontWeight.bold,
+              color: primaryGrey
           ),
         ),
       ),
     );
   }
 
-  // --- PERBAIKAN 2: childAspectRatio disesuaikan ---
   Widget _buildProductGrid() {
     return FutureBuilder<List<ProductModel>>(
       future: _productsFuture,
@@ -178,12 +174,10 @@ class _StorePageScreenState extends State<StorePageScreen> {
           padding: const EdgeInsets.all(16.0),
           sliver: SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, 
-              mainAxisSpacing: 16, 
-              crossAxisSpacing: 16, 
-              // Nilai 0.58 akan memberikan lebih banyak ruang vertikal 
-              // dan mengatasi overflow 8.0 pixels yang tersisa.
-              childAspectRatio: 0.58, 
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 0.58,
             ),
             delegate: SliverChildBuilderDelegate(
               (context, index) => _buildProductCard(context, products[index]),
@@ -194,18 +188,15 @@ class _StorePageScreenState extends State<StorePageScreen> {
       },
     );
   }
-  // --- END PERBAIKAN 2 ---
 
-  // --- PERBAIKAN 1: const Spacer() dihapus ---
   Widget _buildProductCard(BuildContext context, ProductModel product) {
     return Card(
       clipBehavior: Clip.antiAlias,
       elevation: 2,
-      color: cardBackground, // Card putih
+      color: cardBackground,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: InkWell(
         onTap: () {
-          // Logika navigasi ke detail produk (jika ada)
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -225,9 +216,9 @@ class _StorePageScreenState extends State<StorePageScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                product.name, 
-                style: TextStyle(fontWeight: FontWeight.bold, color: primaryGrey), // Teks abu-abu gelap
-                maxLines: 2, 
+                product.name,
+                style: TextStyle(fontWeight: FontWeight.bold, color: primaryGrey),
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -235,13 +226,10 @@ class _StorePageScreenState extends State<StorePageScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
                 AppFormatter.formatRupiah(product.price),
-                style: TextStyle(color: primaryGrey, fontWeight: FontWeight.bold), // Harga abu-abu gelap
+                style: TextStyle(color: primaryGrey, fontWeight: FontWeight.bold),
               ),
             ),
-            
-            // PERBAIKAN: Spacer dihapus dan diganti dengan SizedBox.
-            const SizedBox(height: 8), 
-            
+            const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
               child: ElevatedButton(
@@ -252,7 +240,7 @@ class _StorePageScreenState extends State<StorePageScreen> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryGrey, // Tombol abu-abu gelap
+                  backgroundColor: primaryGrey,
                   foregroundColor: Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -265,7 +253,6 @@ class _StorePageScreenState extends State<StorePageScreen> {
       ),
     );
   }
-  // --- END PERBAIKAN 1 ---
 
   Widget _buildReviewSection() {
     return FutureBuilder<List<ProductModel>>(
@@ -283,12 +270,12 @@ class _StorePageScreenState extends State<StorePageScreen> {
               )),
             );
           }
-          
+
           return SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                (context, index) => ReviewCard(review: reviews[index]), 
+                (context, index) => ReviewCard(review: reviews[index]),
                 childCount: reviews.length,
               ),
             ),
@@ -312,10 +299,10 @@ class _StorePageScreenState extends State<StorePageScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Divider(height: 32, color: Colors.grey.shade300), // Divider abu-abu
+                  Divider(height: 32, color: Colors.grey.shade300),
                   Text(
                     "Tulis Ulasan Anda",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryGrey), // Teks abu-abu gelap
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryGrey),
                   ),
                   const SizedBox(height: 16),
                   Text('Rating Anda:', style: TextStyle(color: primaryGrey)),
@@ -325,7 +312,7 @@ class _StorePageScreenState extends State<StorePageScreen> {
                         onPressed: () => setState(() => _newRating = index + 1.0),
                         icon: Icon(
                           index < _newRating ? Icons.star : Icons.star_border,
-                          color: Colors.amber, // Bintang tetap emas
+                          color: Colors.amber,
                           size: 32,
                         ),
                       );
@@ -348,7 +335,7 @@ class _StorePageScreenState extends State<StorePageScreen> {
                   ElevatedButton(
                     onPressed: () => _submitReview(firstProductId),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryGrey, // Tombol abu-abu gelap
+                      backgroundColor: primaryGrey,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       elevation: 0,

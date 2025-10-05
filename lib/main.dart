@@ -11,10 +11,8 @@ import 'package:marketplace2/features/wallet/data/repositories/wallet_repository
 import 'package:marketplace2/features/wallet/logic/wallet_bloc.dart';
 
 void main() async {
-  // Pastikan binding siap sebelum menjalankan plugin
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Inisialisasi data locale untuk format tanggal Bahasa Indonesia
   await initializeDateFormatting('id_ID', null); 
   
   runApp(const MyApp());
@@ -34,19 +32,16 @@ class MyApp extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
-          // Menyediakan AuthBloc dan langsung memeriksa status login
           BlocProvider(
             create: (context) => AuthBloc(
               authRepository: context.read<LocalAuthRepository>(),
             )..add(CheckAuthStatus()),
           ),
-          // Menyediakan WalletBloc dengan WalletRepository
           BlocProvider(
             create: (context) => WalletBloc(
               walletRepository: context.read<WalletRepository>(),
             ),
           ),
-          // Menyediakan CartBloc dengan CartRepository
           BlocProvider(
             create: (context) => CartBloc(
               cartRepository: context.read<CartRepository>(),
@@ -55,13 +50,10 @@ class MyApp extends StatelessWidget {
         ],
         child: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
-            // "Pendengar" global yang bereaksi terhadap perubahan status login
             if (state is AuthSuccess) {
-              // Saat login berhasil, muat data dompet dan keranjang pengguna
               context.read<WalletBloc>().add(LoadWallet(userEmail: state.user.email));
               context.read<CartBloc>().add(LoadCart(userEmail: state.user.email));
             } else if (state is AuthLoggedOut) {
-              // Saat logout, reset data dompet dan keranjang
               context.read<WalletBloc>().add(ResetWallet());
               context.read<CartBloc>().add(ClearCart());
             }
@@ -123,7 +115,7 @@ class MyApp extends StatelessWidget {
                   foregroundColor: Colors.deepPurple,
                 ),
               ),
-               floatingActionButtonTheme: FloatingActionButtonThemeData(
+                floatingActionButtonTheme: FloatingActionButtonThemeData(
                 backgroundColor: Colors.deepPurpleAccent,
                 foregroundColor: Colors.white,
               ),

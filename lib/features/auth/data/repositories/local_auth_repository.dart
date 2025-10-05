@@ -5,14 +5,13 @@ import 'package:marketplace2/features/auth/data/models/user_model.dart';
 class LocalAuthRepository {
   static const String _usersDbKey = 'users_db';
   static const String _loginStatusKey = 'is_logged_in';
-  static const String _currentUserKey = 'current_user'; // Kunci untuk data user
+  static const String _currentUserKey = 'current_user';
   List<UserModel> _users = [];
 
   LocalAuthRepository() {
     _loadUsers();
   }
 
-  // --- Fungsi Internal ---
   Future<void> _loadUsers() async {
     final prefs = await SharedPreferences.getInstance();
     final String? usersString = prefs.getString(_usersDbKey);
@@ -30,15 +29,11 @@ class LocalAuthRepository {
     await prefs.setString(_usersDbKey, usersString);
   }
 
-  // --- Fungsi Publik ---
-
-  // Memeriksa apakah pengguna sedang dalam status login
   Future<bool> isLoggedIn() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_loginStatusKey) ?? false;
   }
 
-  // Mengambil data user yang sedang login
   Future<UserModel?> getCurrentUser() async {
     final prefs = await SharedPreferences.getInstance();
     final String? userString = prefs.getString(_currentUserKey);
@@ -55,19 +50,15 @@ class LocalAuthRepository {
     await _loadUsers();
     await Future.delayed(const Duration(seconds: 1));
     try {
-      // Cari pengguna yang cocok
       final user = _users.firstWhere(
           (user) => user.email == email && user.password == password);
-      
+
       final prefs = await SharedPreferences.getInstance();
-      // Simpan status bahwa pengguna sudah login
       await prefs.setBool(_loginStatusKey, true);
-      // Simpan data lengkap pengguna yang login
       await prefs.setString(_currentUserKey, jsonEncode(user.toJson()));
 
     } catch (e) {
       final prefs = await SharedPreferences.getInstance();
-      // Jika gagal, hapus semua status login
       await prefs.setBool(_loginStatusKey, false);
       await prefs.remove(_currentUserKey);
       throw Exception('Email atau password salah.');
@@ -76,12 +67,11 @@ class LocalAuthRepository {
 
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
-    // Hapus status login dan data pengguna
     await prefs.setBool(_loginStatusKey, false);
     await prefs.remove(_currentUserKey);
     await Future.delayed(const Duration(milliseconds: 500));
   }
-  
+
   Future<void> register({
     required String fullName,
     required String email,

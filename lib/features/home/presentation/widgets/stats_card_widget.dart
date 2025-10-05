@@ -7,8 +7,6 @@ class StatsCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ValueListenableBuilder secara otomatis akan membangun ulang widget ini
-    // setiap kali data di UserStatsService berubah.
     return ValueListenableBuilder<UserStats>(
       valueListenable: UserStatsService.instance.stats,
       builder: (context, userStats, child) {
@@ -23,12 +21,11 @@ class StatsCardWidget extends StatelessWidget {
               children: [
                 _buildStatItem(context, Icons.shopping_bag_outlined, userStats.orderCount.toString(), "Pesanan"),
                 _buildStatItem(context, Icons.rate_review_outlined, userStats.reviewCount.toString(), "Ulasan"),
-                // Flexible agar teks tidak overflow jika angkanya besar
                 Flexible(
                   child: _buildStatItem(
-                    context, 
-                    Icons.account_balance_wallet_outlined, 
-                    AppFormatter.formatRupiah(userStats.monthlySpending), 
+                    context,
+                    Icons.account_balance_wallet_outlined,
+                    AppFormatter.formatRupiah(userStats.monthlySpending),
                     "Pengeluaran Bulan Ini"
                   ),
                 ),
@@ -40,7 +37,6 @@ class StatsCardWidget extends StatelessWidget {
     );
   }
 
-  // Fungsi helper untuk membuat satu item statistik
   Widget _buildStatItem(BuildContext context, IconData icon, String value, String label) {
     return Column(
       children: [

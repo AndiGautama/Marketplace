@@ -12,20 +12,19 @@ class RegisterScreen extends StatelessWidget {
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
 
-    // 🎨 Definisi Warna Tema ABU-ABU GELAP (Lokal)
-    final Color darkBackground = Colors.grey.shade600; // Background gelap
-    final Color primaryDark = Colors.grey.shade900; // Warna utama (Teks & Ikon)
-    final Color inputFillColor = Colors.white; // Input field tetap putih
-    final Color buttonColor = Colors.grey.shade300; // Tombol abu-abu muda
-    final Color inputBorderColor = Colors.grey.shade400; // Warna border input
-    final Color secondaryText = Colors.black87; 
+    final Color darkBackground = Colors.grey.shade600;
+    final Color primaryDark = Colors.grey.shade900;
+    final Color inputFillColor = Colors.white;
+    final Color buttonColor = Colors.grey.shade300;
+    final Color inputBorderColor = Colors.grey.shade400;
+    final Color secondaryText = Colors.black87;
 
     return Scaffold(
-      backgroundColor: darkBackground, // Background ABU-ABU GELAP
+      backgroundColor: darkBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: primaryDark, // Ikon Back Abu-abu Gelap
+        foregroundColor: primaryDark,
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -56,21 +55,19 @@ class RegisterScreen extends StatelessWidget {
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Serif',
-                        color: primaryDark, // Teks utama Abu-abu Gelap
+                        color: primaryDark,
                       ),
                     ),
                     const SizedBox(height: 48),
-                    
-                    // --- INPUT FULL NAME ---
+
                     TextFormField(
                       controller: fullNameController,
                       decoration: InputDecoration(
                         labelText: 'Full Name',
                         labelStyle: TextStyle(color: primaryDark.withOpacity(0.7)),
-                        prefixIcon: Icon(Icons.person, color: primaryDark), // Ikon Abu-abu Gelap
+                        prefixIcon: Icon(Icons.person, color: primaryDark),
                         filled: true,
                         fillColor: inputFillColor,
-                        // Styling border rapi
                         border: OutlineInputBorder(
                           borderRadius: const BorderRadius.all(Radius.circular(30)),
                           borderSide: BorderSide(color: inputBorderColor),
@@ -86,17 +83,15 @@ class RegisterScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    
-                    // --- INPUT EMAIL ---
+
                     TextFormField(
                       controller: emailController,
                       decoration: InputDecoration(
                         labelText: 'Email Address',
                         labelStyle: TextStyle(color: primaryDark.withOpacity(0.7)),
-                        prefixIcon: Icon(Icons.email, color: primaryDark), // Ikon Abu-abu Gelap
+                        prefixIcon: Icon(Icons.email, color: primaryDark),
                         filled: true,
                         fillColor: inputFillColor,
-                        // Styling border rapi
                         border: OutlineInputBorder(
                           borderRadius: const BorderRadius.all(Radius.circular(30)),
                           borderSide: BorderSide(color: inputBorderColor),
@@ -113,17 +108,15 @@ class RegisterScreen extends StatelessWidget {
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
-                    
-                    // --- INPUT PASSWORD ---
+
                     TextFormField(
                       controller: passwordController,
                       decoration: InputDecoration(
                         labelText: 'Password',
                         labelStyle: TextStyle(color: primaryDark.withOpacity(0.7)),
-                        prefixIcon: Icon(Icons.lock, color: primaryDark), // Ikon Abu-abu Gelap
+                        prefixIcon: Icon(Icons.lock, color: primaryDark),
                         filled: true,
                         fillColor: inputFillColor,
-                        // Styling border rapi
                         border: OutlineInputBorder(
                           borderRadius: const BorderRadius.all(Radius.circular(30)),
                           borderSide: BorderSide(color: inputBorderColor),
@@ -140,8 +133,7 @@ class RegisterScreen extends StatelessWidget {
                       obscureText: true,
                     ),
                     const SizedBox(height: 24),
-                    
-                    // --- TOMBOL SIGN UP ---
+
                     state is AuthLoading
                         ? Center(child: CircularProgressIndicator(color: primaryDark))
                         : ElevatedButton(
@@ -171,7 +163,7 @@ class RegisterScreen extends StatelessWidget {
                                   );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: buttonColor, // Tombol abu-abu muda
+                              backgroundColor: buttonColor,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
@@ -180,12 +172,11 @@ class RegisterScreen extends StatelessWidget {
                             ),
                             child: Text(
                               'Sign Up',
-                              style: TextStyle(color: primaryDark), // Teks tombol Abu-abu Gelap
+                              style: TextStyle(color: primaryDark),
                             ),
                           ),
                     const SizedBox(height: 16),
-                    
-                    // --- LINK KE LOGIN ---
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -195,7 +186,7 @@ class RegisterScreen extends StatelessWidget {
                           onPressed: () => context.go('/login'),
                           child: Text(
                             'Sign In',
-                            style: TextStyle(color: primaryDark), // Teks tombol Abu-abu Gelap
+                            style: TextStyle(color: primaryDark),
                           ),
                         ),
                       ],

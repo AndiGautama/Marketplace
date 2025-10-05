@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-// Ubah menjadi Equatable agar lebih mudah dibandingkan
 class ProductModel extends Equatable {
   final String id;
   final String storeId;
@@ -21,7 +20,6 @@ class ProductModel extends Equatable {
   @override
   List<Object> get props => [id];
 
-  // Fungsi untuk mengubah ProductModel menjadi Map JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -33,7 +31,6 @@ class ProductModel extends Equatable {
     };
   }
 
-  // Fungsi untuk membuat ProductModel dari Map JSON
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
       id: json['id'],

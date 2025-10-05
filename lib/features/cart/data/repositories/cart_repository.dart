@@ -12,7 +12,7 @@ class CartRepository {
       final List<dynamic> cartListJson = jsonDecode(cartString);
       return cartListJson.map((json) => CartItem.fromJson(json)).toList();
     }
-    return []; // Return keranjang kosong jika tidak ada data
+    return [];
   }
 
   Future<void> saveCart(String userEmail, List<CartItem> items) async {

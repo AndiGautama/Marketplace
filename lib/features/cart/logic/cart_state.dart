@@ -6,10 +6,8 @@ abstract class CartState extends Equatable {
   List<Object> get props => [];
 }
 
-// State awal atau saat keranjang belum dimuat
 class CartInitial extends CartState {}
 
-// State ketika keranjang sudah dimuat (bisa kosong atau berisi)
 class CartLoaded extends CartState {
   final List<CartItem> items;
   final double totalPrice;

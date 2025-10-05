@@ -4,8 +4,8 @@ class TransactionModel {
   final String id;
   final TransactionType type;
   final String description;
-  final double amountChange; // Perubahan saldo (negatif jika belanja)
-  final int pointsChange;   // Perubahan poin (negatif jika ditukar)
+  final double amountChange;
+  final int pointsChange;
   final DateTime date;
 
   TransactionModel({
@@ -17,7 +17,6 @@ class TransactionModel {
     required this.date,
   });
 
-  // Fungsi untuk konversi ke/dari JSON agar bisa disimpan
   Map<String, dynamic> toJson() => {
         'id': id,
         'type': type.name,

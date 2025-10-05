@@ -16,7 +16,6 @@ class UserModel extends Equatable {
   @override
   List<Object> get props => [id, email];
 
-  // Method untuk mengubah UserModel menjadi Map (format JSON)
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -26,7 +25,6 @@ class UserModel extends Equatable {
     };
   }
 
-  // Factory constructor untuk membuat UserModel dari Map (format JSON)
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'],

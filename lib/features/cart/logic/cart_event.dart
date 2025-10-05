@@ -6,7 +6,6 @@ abstract class CartEvent extends Equatable {
   List<Object> get props => [];
 }
 
-// Event saat pengguna menekan "Masukkan ke keranjang"
 class AddProductToCart extends CartEvent {
   final ProductModel product;
   const AddProductToCart(this.product);
@@ -14,7 +13,6 @@ class AddProductToCart extends CartEvent {
   List<Object> get props => [product];
 }
 
-// Event saat pengguna menekan tombol '+' di keranjang
 class IncrementCartItem extends CartEvent {
   final ProductModel product;
   const IncrementCartItem(this.product);
@@ -22,7 +20,6 @@ class IncrementCartItem extends CartEvent {
   List<Object> get props => [product];
 }
 
-// Event saat pengguna menekan tombol '-' di keranjang
 class DecrementCartItem extends CartEvent {
   final ProductModel product;
   const DecrementCartItem(this.product);
@@ -30,7 +27,6 @@ class DecrementCartItem extends CartEvent {
   List<Object> get props => [product];
 }
 
-// Event saat pengguna menekan tombol hapus di keranjang
 class RemoveFromCart extends CartEvent {
   final ProductModel product;
   const RemoveFromCart(this.product);
@@ -38,7 +34,6 @@ class RemoveFromCart extends CartEvent {
   List<Object> get props => [product];
 }
 
-// Event baru untuk mengosongkan keranjang
 class ClearCart extends CartEvent {}
 
 class LoadCart extends CartEvent {

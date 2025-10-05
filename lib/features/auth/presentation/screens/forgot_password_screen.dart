@@ -10,20 +10,19 @@ class ForgotPasswordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final emailController = TextEditingController();
 
-    // 🎨 Definisi Warna Tema ABU-ABU GELAP (Lokal)
-    final Color darkBackground = Colors.grey.shade600; // Background gelap
-    final Color primaryDark = Colors.grey.shade900; // Warna utama (Teks & Ikon)
-    final Color inputFillColor = Colors.white; // Input field tetap putih
-    final Color buttonColor = Colors.grey.shade300; // Tombol abu-abu muda
-    final Color inputBorderColor = Colors.grey.shade400; // Warna border input
-    final Color secondaryText = Colors.black87; 
+    final Color darkBackground = Colors.grey.shade600;
+    final Color primaryDark = Colors.grey.shade900;
+    final Color inputFillColor = Colors.white;
+    final Color buttonColor = Colors.grey.shade300;
+    final Color inputBorderColor = Colors.grey.shade400;
+    final Color secondaryText = Colors.black87;
 
     return Scaffold(
-      backgroundColor: darkBackground, // Background ABU-ABU GELAP
+      backgroundColor: darkBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: primaryDark, // Ikon kembali Abu-abu gelap
+        foregroundColor: primaryDark,
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -34,7 +33,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 backgroundColor: Colors.green,
               ),
             );
-            context.go('/login'); // Kembali ke login setelah notifikasi
+            context.go('/login');
           }
           if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -59,14 +58,14 @@ class ForgotPasswordScreen extends StatelessWidget {
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Serif',
-                    color: primaryDark, // Teks utama Abu-abu gelap
+                    color: primaryDark,
                   ),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   "No worries, we'll send you reset instructions",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: secondaryText), // Teks sekunder
+                  style: TextStyle(fontSize: 16, color: secondaryText),
                 ),
                 const SizedBox(height: 48),
                 TextFormField(
@@ -74,10 +73,9 @@ class ForgotPasswordScreen extends StatelessWidget {
                   decoration: InputDecoration(
                     labelText: 'Email',
                     labelStyle: TextStyle(color: primaryDark.withOpacity(0.7)),
-                    prefixIcon: Icon(Icons.email, color: primaryDark), // Ikon Abu-abu gelap
+                    prefixIcon: Icon(Icons.email, color: primaryDark),
                     filled: true,
-                    fillColor: inputFillColor, // Kotak input putih
-                    // Styling border yang dirapikan
+                    fillColor: inputFillColor,
                     border: OutlineInputBorder(
                       borderRadius: const BorderRadius.all(Radius.circular(30)),
                       borderSide: BorderSide(color: inputBorderColor),
@@ -95,7 +93,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 32),
                 state is AuthLoading
-                    ? Center(child: CircularProgressIndicator(color: primaryDark)) // Loader Abu-abu gelap
+                    ? Center(child: CircularProgressIndicator(color: primaryDark))
                     : ElevatedButton(
                         onPressed: () {
                           context.read<AuthBloc>().add(
@@ -103,16 +101,16 @@ class ForgotPasswordScreen extends StatelessWidget {
                                   email: emailController.text));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: buttonColor, // Tombol abu-abu muda
+                          backgroundColor: buttonColor,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          elevation: 0, // Menghilangkan elevasi
+                          elevation: 0,
                         ),
                         child: Text(
                           'Reset Password',
-                          style: TextStyle(color: primaryDark), // Teks tombol Abu-abu gelap
+                          style: TextStyle(color: primaryDark),
                         ),
                       ),
                 const SizedBox(height: 16),
@@ -120,7 +118,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                   onPressed: () => context.go('/login'),
                   child: Text(
                     'Back to Login',
-                    style: TextStyle(color: primaryDark), // Teks tombol Abu-abu gelap
+                    style: TextStyle(color: primaryDark),
                   ),
                 ),
               ],

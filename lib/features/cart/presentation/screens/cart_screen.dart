@@ -15,14 +15,13 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Definisi Warna Tema Abu-abu
     final Color primaryGrey = Colors.grey.shade800;
     final Color backgroundGrey = Colors.grey.shade100;
     final Color cardBackground = Colors.white;
     final Color appBarBackground = Colors.grey.shade200;
 
     return Scaffold(
-      backgroundColor: backgroundGrey, // Background abu-abu muda
+      backgroundColor: backgroundGrey,
       appBar: AppBar(
         title: Text('Keranjang Belanja', style: TextStyle(color: primaryGrey, fontWeight: FontWeight.bold)),
         backgroundColor: appBarBackground,
@@ -69,12 +68,11 @@ class CartScreen extends StatelessWidget {
   }
 
   Widget _buildCartItemCard(BuildContext context, CartItem cartItem, Color cardBackground) {
-    // Warna Ikon Tombol
     final Color primaryColor = Colors.grey.shade800;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12.0),
-      color: cardBackground, // Latar belakang kartu putih
+      color: cardBackground,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
@@ -102,7 +100,6 @@ class CartScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     AppFormatter.formatRupiah(cartItem.product.price),
-                    // Gunakan warna abu-abu gelap untuk penekanan harga
                     style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                 ],
@@ -111,12 +108,12 @@ class CartScreen extends StatelessWidget {
             Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.remove_circle_outline, color: Colors.grey), // Abu-abu standar
+                  icon: const Icon(Icons.remove_circle_outline, color: Colors.grey),
                   onPressed: () => context.read<CartBloc>().add(DecrementCartItem(cartItem.product)),
                 ),
                 Text('${cartItem.quantity}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
                 IconButton(
-                  icon: Icon(Icons.add_circle_outline, color: primaryColor), // Abu-abu gelap
+                  icon: Icon(Icons.add_circle_outline, color: primaryColor),
                   onPressed: () => context.read<CartBloc>().add(IncrementCartItem(cartItem.product)),
                 ),
               ],
@@ -133,7 +130,7 @@ class CartScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white, // Bagian checkout tetap putih untuk kontras
+        color: Colors.white,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(16),
           topRight: Radius.circular(16),
@@ -156,20 +153,18 @@ class CartScreen extends StatelessWidget {
             children: [
               const Text('Total Belanja', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
               Text(
-                AppFormatter.formatRupiah(totalPrice), // Format harga
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryGrey), // Harga total abu-abu gelap
+                AppFormatter.formatRupiah(totalPrice),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryGrey),
               ),
             ],
           ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
-              // --- LOGIKA CHECKOUT LENGKAP ---
               final authState = context.read<AuthBloc>().state;
               final walletState = context.read<WalletBloc>().state;
 
               if (authState is AuthSuccess && walletState is WalletLoaded) {
-                // 1. Cek Saldo Cukup
                 if (walletState.balance < totalPrice) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Saldo Anda tidak cukup!'), backgroundColor: Colors.red),
@@ -177,34 +172,28 @@ class CartScreen extends StatelessWidget {
                   return;
                 }
 
-                // 2. Hitung Poin
                 final int pointsEarned = (totalPrice / 10000).floor();
 
-                // 3. Catat Transaksi Belanja ke Riwayat
                 final transaction = TransactionModel(
                   id: DateTime.now().millisecondsSinceEpoch.toString(),
                   type: TransactionType.purchase,
                   description: 'Pembelian ${cartState.items.length} jenis item',
-                  amountChange: -totalPrice, // Saldo berkurang
-                  pointsChange: pointsEarned, // Poin bertambah
+                  amountChange: -totalPrice,
+                  pointsChange: pointsEarned,
                   date: DateTime.now(),
                 );
                 context.read<HistoryRepository>().addTransaction(authState.user.email, transaction);
 
-                // 4. Kirim Event untuk memproses pembelian (kurangi saldo & tambah poin)
                 context.read<WalletBloc>().add(ProcessPurchase(
                       amountToSubtract: totalPrice,
                       pointsToAdd: pointsEarned,
                       userEmail: authState.user.email,
                     ));
 
-                // 5. Kirim Event untuk Kosongkan Keranjang
                 context.read<CartBloc>().add(ClearCart());
 
-                // 6. TAMBAHKAN PEMANGGILAN SERVICE DI SINI
                 UserStatsService.instance.addOrder(totalPrice);
 
-                // 7. Tampilkan Notifikasi Sukses
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Pembelian berhasil! Anda mendapatkan $pointsEarned poin.'),
@@ -212,11 +201,9 @@ class CartScreen extends StatelessWidget {
                   ),
                 );
 
-                // 8. Arahkan ke Halaman Home
                 context.go('/');
 
               } else {
-                // Jika pengguna entah bagaimana tidak login, arahkan ke halaman login
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Silakan login untuk melanjutkan.')),
                 );
@@ -224,8 +211,8 @@ class CartScreen extends StatelessWidget {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: primaryGrey, // Tombol abu-abu gelap
-              foregroundColor: Colors.white, // Teks tombol putih
+              backgroundColor: primaryGrey,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               elevation: 0,

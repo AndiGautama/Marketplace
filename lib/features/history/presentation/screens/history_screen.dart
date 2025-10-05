@@ -18,14 +18,12 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> {
   late Future<List<TransactionModel>> _transactionsFuture;
 
-  // 🎨 Definisi Warna Tema Abu-abu
   final Color primaryGrey = Colors.grey.shade800;
   final Color backgroundGrey = Colors.grey.shade100;
   final Color appBarBackground = Colors.grey.shade200;
   final Color cardBackground = Colors.white;
   final Color secondaryText = Colors.grey.shade600;
 
-  // Warna Fungsional (dipertahankan untuk kejelasan transaksi)
   final Color purchaseColor = Colors.red.shade700;
   final Color topUpColor = Colors.green.shade600;
   final Color pointRedemptionColor = Colors.orange.shade600;
@@ -60,7 +58,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final authState = context.read<AuthBloc>().state;
 
     return Scaffold(
-      backgroundColor: backgroundGrey, // Background abu-abu muda
+      backgroundColor: backgroundGrey,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: primaryGrey),
@@ -84,7 +82,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(child: Text('Tidak ada riwayat.', style: TextStyle(color: secondaryText)));
                 }
-                
+
                 var transactions = snapshot.data!;
                 if (widget.filter != null) {
                   transactions = transactions.where((t) => t.type == widget.filter).toList();
@@ -116,7 +114,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     switch (trx.type) {
       case TransactionType.purchase:
         icon = Icons.shopping_bag_outlined;
-        color = purchaseColor; // Merah
+        color = purchaseColor;
         amountString = '- ${AppFormatter.formatRupiah(-trx.amountChange)}';
         if (trx.pointsChange > 0) {
           pointString = '+${trx.pointsChange} Poin';
@@ -124,19 +122,19 @@ class _HistoryScreenState extends State<HistoryScreen> {
         break;
       case TransactionType.topUp:
         icon = Icons.account_balance_wallet_outlined;
-        color = topUpColor; // Hijau
+        color = topUpColor;
         amountString = '+ ${AppFormatter.formatRupiah(trx.amountChange)}';
         break;
       case TransactionType.pointRedemption:
         icon = Icons.star_outline;
-        color = pointRedemptionColor; // Oranye
+        color = pointRedemptionColor;
         amountString = '${trx.pointsChange} Poin';
         break;
     }
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      color: cardBackground, // Card putih
+      color: cardBackground,
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -146,13 +144,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1), // Latar belakang ikon transparan
+            color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 24),
         ),
         title: Text(
-          trx.description, 
+          trx.description,
           style: TextStyle(fontWeight: FontWeight.bold, color: primaryGrey)
         ),
         subtitle: Text(

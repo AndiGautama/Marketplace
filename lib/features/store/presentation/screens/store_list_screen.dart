@@ -15,12 +15,11 @@ class _StoreListScreenState extends State<StoreListScreen> {
   late Future<List<StoreModel>> _storesFuture;
   final MockStoreRepository storeRepository = MockStoreRepository();
 
-  // 🎨 Warna Tema ABU-ABU GELAP (Lokal)
-  final Color darkPrimary = Colors.grey.shade900; // Warna Aksi/Primer Abu-abu gelap
-  final Color lightBackground = Colors.grey.shade100; // Background ABU-ABU MUDA
-  final Color appBarBackground = Colors.grey.shade50; // Background AppBar ABU-ABU SANGAT TERANG
+  final Color darkPrimary = Colors.grey.shade900;
+  final Color lightBackground = Colors.grey.shade100;
+  final Color appBarBackground = Colors.grey.shade50;
   final Color cardBackground = Colors.white;
-  final Color cardBorderGrey = Colors.grey.shade400; // Border Abu-abu gelap halus
+  final Color cardBorderGrey = Colors.grey.shade400;
   final Color secondaryText = Colors.grey.shade600;
 
   @override
@@ -32,17 +31,17 @@ class _StoreListScreenState extends State<StoreListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: lightBackground, // Background ABU-ABU MUDA
+      backgroundColor: lightBackground,
       appBar: AppBar(
         title: Text(
           widget.categoryName,
           style: TextStyle(
-            color: darkPrimary, // Teks judul Abu-abu gelap
+            color: darkPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: appBarBackground, // Background AppBar ABU-ABU SANGAT TERANG
-        foregroundColor: darkPrimary, // Ikon kembali Abu-abu gelap
+        backgroundColor: appBarBackground,
+        foregroundColor: darkPrimary,
         elevation: 0,
         surfaceTintColor: appBarBackground,
       ),
@@ -51,7 +50,7 @@ class _StoreListScreenState extends State<StoreListScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(color: darkPrimary), // Loading Abu-abu gelap
+              child: CircularProgressIndicator(color: darkPrimary),
             );
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -80,13 +79,12 @@ class _StoreListScreenState extends State<StoreListScreen> {
     return Card(
       clipBehavior: Clip.antiAlias,
       margin: const EdgeInsets.only(bottom: 16.0),
-      color: cardBackground, // Card putih
+      color: cardBackground,
       elevation: 3,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        // Border Abu-abu gelap halus
         side: BorderSide(
-          color: cardBorderGrey, 
+          color: cardBorderGrey,
           width: 1,
         ),
       ),
@@ -95,7 +93,6 @@ class _StoreListScreenState extends State<StoreListScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Banner Toko
             Image.asset(
               store.bannerUrl,
               height: 120,
@@ -103,11 +100,11 @@ class _StoreListScreenState extends State<StoreListScreen> {
               errorBuilder: (context, error, stackTrace) {
                 return Container(
                   height: 120,
-                  color: Colors.grey.shade200, // Placeholder Abu-abu Muda
+                  color: Colors.grey.shade200,
                   child: Center(
                     child: Icon(
                       Icons.broken_image_outlined,
-                      color: darkPrimary, // Ikon Abu-abu gelap
+                      color: darkPrimary,
                       size: 40,
                     ),
                   ),
@@ -121,7 +118,7 @@ class _StoreListScreenState extends State<StoreListScreen> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: darkPrimary, // Teks Abu-abu gelap
+                  color: darkPrimary,
                 ),
               ),
             ),

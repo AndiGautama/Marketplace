@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:marketplace2/features/auth/logic/auth_bloc.dart';
 import 'package:marketplace2/features/cart/logic/cart_bloc.dart';
 
-// Model untuk merepresentasikan data sebuah banner iklan
 class AdBannerModel {
   final String title;
   final String imageUrl;
@@ -28,16 +27,15 @@ class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  // 🎨 Definisi Warna Tema ABU-ABU (Lokal)
-  final Color primaryGrey = Colors.grey.shade800; // Warna utama abu-abu gelap
-  final Color darkAccent = Colors.grey.shade900; // Warna yang LEBIH gelap untuk kontras
-  final Color lightBackground = Colors.grey.shade100; // Background abu-abu muda
-  final Color appBarBackground = Colors.grey.shade50; // Background AppBar abu-abu sangat terang
+  final Color primaryGrey = Colors.grey.shade800;
+  final Color darkAccent = Colors.grey.shade900;
+  final Color lightBackground = Colors.grey.shade100;
+  final Color appBarBackground = Colors.grey.shade50;
 
-  final Color searchBoxColor = Colors.white; // Kotak pencarian putih
+  final Color searchBoxColor = Colors.white;
   final Color textDark = Colors.black87;
   final Color textLight = Colors.grey.shade600;
-  final Color cardBackground = Colors.white; // Background card fitur
+  final Color cardBackground = Colors.white;
 
   final List<AdBannerModel> _adBanners = [
     AdBannerModel(
@@ -104,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (authState is AuthSuccess) {
       action();
     } else {
-      // Navigasi ke halaman login jika belum login
       context.go('/login');
     }
   }
@@ -112,9 +109,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: lightBackground, // Background abu-abu muda
+      backgroundColor: lightBackground,
       appBar: AppBar(
-        backgroundColor: appBarBackground, // Background AppBar abu-abu terang
+        backgroundColor: appBarBackground,
         surfaceTintColor: appBarBackground,
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -125,10 +122,10 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               color: searchBoxColor,
               borderRadius: BorderRadius.circular(25.0),
-              border: Border.all(color: Colors.grey.shade300), // Border abu halus
+              border: Border.all(color: Colors.grey.shade300),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.15), // Shadow abu
+                  color: Colors.grey.withOpacity(0.15),
                   spreadRadius: 1,
                   blurRadius: 5,
                 ),
@@ -136,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: Row(
               children: [
-                Icon(Icons.search, color: primaryGrey), // Ikon abu-abu
+                Icon(Icons.search, color: primaryGrey),
                 const SizedBox(width: 8),
                 Text('Cari Apa?', style: TextStyle(color: textLight, fontSize: 16)),
               ],
@@ -153,9 +150,9 @@ class _HomeScreenState extends State<HomeScreen> {
               return Badge(
                 label: Text('$itemCount'),
                 isLabelVisible: itemCount > 0,
-                backgroundColor: primaryGrey, // Badge abu
+                backgroundColor: primaryGrey,
                 child: IconButton(
-                  icon: Icon(Icons.shopping_cart_outlined, color: primaryGrey), // Ikon keranjang abu
+                  icon: Icon(Icons.shopping_cart_outlined, color: primaryGrey),
                   onPressed: () {
                     _handleProtectedAction(context, () {
                       context.go('/cart');
@@ -179,12 +176,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (state is AuthSuccess) {
                     return Text(
                       'Selamat Datang,\n${state.user.fullName}!',
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: darkAccent), // Teks Judul Abu-abu Gelap
+                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: darkAccent),
                     );
                   }
                   return Text(
                     'SELAMAT DATANG',
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: darkAccent), // Teks Judul Abu-abu Gelap
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: darkAccent),
                   );
                 },
               ),
@@ -221,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: 'Market',
                       subtitle: 'Mulai berbelanja',
                       icon: Icons.storefront_outlined,
-                      iconColor: darkAccent, // Ikon Abu-abu Lebih Gelap
+                      iconColor: darkAccent,
                       onTap: () => _handleProtectedAction(context, () => context.go('/categories')),
                     ),
                   ),
@@ -232,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: 'Loyalty',
                       subtitle: 'Mulai menukar',
                       icon: Icons.redeem_outlined,
-                      iconColor: darkAccent, // Ikon Abu-abu Lebih Gelap
+                      iconColor: darkAccent,
                       onTap: () => _handleProtectedAction(context, () => context.push('/loyalty')),
                     ),
                   ),
@@ -242,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 32),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text('Kategori Populer', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: darkAccent)), // Teks Judul Abu-abu Lebih Gelap
+              child: Text('Kategori Populer', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: darkAccent)),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -276,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 8.0,
       width: _currentPage == index ? 24.0 : 8.0,
       decoration: BoxDecoration(
-        color: _currentPage == index ? darkAccent : Colors.grey.shade400, // Dot Aktif Abu-abu Lebih Gelap
+        color: _currentPage == index ? darkAccent : Colors.grey.shade400,
         borderRadius: BorderRadius.circular(12),
       ),
     );
@@ -334,10 +331,10 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           color: cardBackground,
           borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.grey.shade300), // Border abu
+          border: Border.all(color: Colors.grey.shade300),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.15), // Shadow abu
+              color: Colors.grey.withOpacity(0.15),
               spreadRadius: 1,
               blurRadius: 5,
             ),
@@ -354,7 +351,7 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: darkAccent, // Teks Judul Abu-abu Lebih Gelap
+                color: darkAccent,
               ),
             ),
             const SizedBox(height: 4),
@@ -389,8 +386,8 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             CircleAvatar(
               radius: 30,
-              backgroundColor: Colors.grey.shade300, // Latar belakang ikon abu
-              child: Icon(icon, size: 30, color: darkAccent), // Ikon Abu-abu Lebih Gelap
+              backgroundColor: Colors.grey.shade300,
+              child: Icon(icon, size: 30, color: darkAccent),
             ),
             const SizedBox(height: 8),
             Text(
@@ -398,7 +395,7 @@ class _HomeScreenState extends State<HomeScreen> {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontWeight: FontWeight.w500, color: darkAccent), // Teks Abu-abu Lebih Gelap
+              style: TextStyle(fontWeight: FontWeight.w500, color: darkAccent),
             ),
           ],
         ),

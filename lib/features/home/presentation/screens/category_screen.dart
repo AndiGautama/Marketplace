@@ -15,22 +15,21 @@ class CategoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🎨 Definisi Warna Tema ABU-ABU GELAP (Lokal)
-    final Color darkPrimary = Colors.grey.shade900;    // Warna utama (ikon/teks)
-    final Color lightBackground = Colors.grey.shade200; // Background halaman
-    final Color appBarBackground = Colors.grey.shade100; // Background AppBar
-    final Color cardBorderGrey = Colors.grey.shade400;  // Border Card
-    final Color cardBackground = Colors.white; 
-    
+    final Color darkPrimary = Colors.grey.shade900;
+    final Color lightBackground = Colors.grey.shade200;
+    final Color appBarBackground = Colors.grey.shade100;
+    final Color cardBorderGrey = Colors.grey.shade400;
+    final Color cardBackground = Colors.white;
+
     return Scaffold(
-      backgroundColor: lightBackground, // Background ABU-ABU TERANG
+      backgroundColor: lightBackground,
       appBar: AppBar(
         title: Text(
           'Kategori Toko',
-          style: TextStyle(color: darkPrimary, fontWeight: FontWeight.bold), // Teks judul Abu-abu gelap
+          style: TextStyle(color: darkPrimary, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: appBarBackground, // Background AppBar ABU-ABU SANGAT TERANG
-        foregroundColor: darkPrimary, // Warna ikon kembali Abu-abu gelap
+        backgroundColor: appBarBackground,
+        foregroundColor: darkPrimary,
         elevation: 0,
         surfaceTintColor: appBarBackground,
       ),
@@ -48,12 +47,11 @@ class CategoryScreen extends StatelessWidget {
             final category = categories[index];
             return Card(
               clipBehavior: Clip.antiAlias,
-              color: cardBackground, // Card putih
+              color: cardBackground,
               elevation: 3,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                // Border Abu-abu gelap
-                side: BorderSide(color: cardBorderGrey) 
+                side: BorderSide(color: cardBorderGrey),
               ),
               child: InkWell(
                 onTap: () {
@@ -62,13 +60,11 @@ class CategoryScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Ikon Abu-abu gelap
                     Icon(category['icon'], size: 48, color: darkPrimary),
                     const SizedBox(height: 12),
                     Text(
                       category['name'],
-                      // Teks Abu-abu gelap
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: darkPrimary), 
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: darkPrimary),
                       textAlign: TextAlign.center,
                     ),
                   ],

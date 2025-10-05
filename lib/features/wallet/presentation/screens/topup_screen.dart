@@ -17,7 +17,6 @@ class TopUpScreen extends StatelessWidget {
     final amountController = TextEditingController();
     final quickAmounts = [50000.0, 100000.0, 200000.0, 500000.0];
 
-    // 🎨 Definisi Warna Tema Abu-abu
     final Color primaryGrey = Colors.grey.shade800;
     final Color backgroundGrey = Colors.grey.shade100;
     final Color appBarBackground = Colors.grey.shade200;
@@ -25,7 +24,7 @@ class TopUpScreen extends StatelessWidget {
     final Color inputBorderColor = Colors.grey.shade400;
 
     return Scaffold(
-      backgroundColor: backgroundGrey, // Background abu-abu muda
+      backgroundColor: backgroundGrey,
       appBar: AppBar(
         title: Text('Top Up Saldo', style: TextStyle(color: primaryGrey, fontWeight: FontWeight.bold)),
         backgroundColor: appBarBackground,
@@ -38,7 +37,6 @@ class TopUpScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- BAGIAN SALDO SAAT INI ---
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16.0),
@@ -73,7 +71,6 @@ class TopUpScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
 
-            // --- BAGIAN INPUT NOMINAL ---
             Text('Masukkan Jumlah Top Up', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: primaryGrey)),
             const SizedBox(height: 12),
             TextField(
@@ -97,7 +94,6 @@ class TopUpScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // --- BAGIAN PILIH CEPAT ---
             Text('Pilih Cepat:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: primaryGrey)),
             const SizedBox(height: 12),
             GridView.count(
@@ -111,7 +107,7 @@ class TopUpScreen extends StatelessWidget {
                 return _buildQuickAmountCard(
                   context,
                   amount: amount,
-                  primaryGrey: primaryGrey, // Meneruskan warna tema
+                  primaryGrey: primaryGrey,
                   onTap: () {
                     final formatter = NumberFormat.decimalPattern('id_ID');
                     amountController.text = formatter.format(amount);
@@ -123,7 +119,6 @@ class TopUpScreen extends StatelessWidget {
             ),
             const SizedBox(height: 48),
 
-            // --- TOMBOL TOP UP ---
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -174,8 +169,8 @@ class TopUpScreen extends StatelessWidget {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryGrey, // Tombol abu-abu gelap
-                  foregroundColor: Colors.white, // Teks tombol putih
+                  backgroundColor: primaryGrey,
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 0,
@@ -189,11 +184,10 @@ class TopUpScreen extends StatelessWidget {
     );
   }
 
-  // Helper widget untuk kartu pilihan cepat
   Widget _buildQuickAmountCard(BuildContext context, {
     required double amount,
     required VoidCallback onTap,
-    required Color primaryGrey, // Menerima warna tema
+    required Color primaryGrey,
   }) {
     return InkWell(
       onTap: onTap,
@@ -218,7 +212,7 @@ class TopUpScreen extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
-              color: primaryGrey, // Teks abu-abu gelap
+              color: primaryGrey,
             ),
           ),
         ),

@@ -2,8 +2,8 @@ class Review {
   final String id;
   final String productId;
   final String username;
-  final String avatarInitial; // Huruf pertama dari nama untuk avatar
-  final double rating; // Rating dari 1.0 sampai 5.0
+  final String avatarInitial;
+  final double rating;
   final String comment;
   final DateTime date;
 
