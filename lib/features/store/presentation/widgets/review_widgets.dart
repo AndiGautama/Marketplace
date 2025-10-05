@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../domain/services/review_service.dart';
 import '../../data/models/review_model.dart';
 import 'package:intl/intl.dart';
 
-// Widget untuk menampilkan bintang rating
 class RatingStars extends StatelessWidget {
   final double rating;
   final double size;
@@ -28,7 +26,6 @@ class RatingStars extends StatelessWidget {
   }
 }
 
-// Widget untuk menampilkan satu kartu ulasan
 class ReviewCard extends StatelessWidget {
   final Review review;
   const ReviewCard({super.key, required this.review});
